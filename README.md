@@ -64,28 +64,29 @@ Hier folgt eine Beschreibung der Projekte:
 ### W-Pfad
 
 1.) Zuerst wirst du versuchen, W-Bosonen zu rekonstruieren.
-2.) Dann wirst du versuchen, die Masse des W-Bosons zu bestimmen.
-    2.a) Je nach Erfahrung kann dies unter Betrachtung des Physik-Untergrund geschehen oder nicht, und mithilfe eines kinematischen Fits oder nicht.
+
+2.) Dann wirst du versuchen, die Masse des W-Bosons zu bestimmen. Je nach Erfahrung kann dies unter Betrachtung des Physik-Untergrund geschehen oder nicht, und mithilfe eines kinematischen Fits oder nicht.
+
 3.) Wenn Deine Zeit es zulässt, werden wir danach zusätzliche Fragestellungen erörtern. Dies kann zum Beispiel sein:
-    * Messe die Anzahl von positiv und negativ geladenen W-Bosonen. Was findest Du? Macht das Ergebnis Sinn?
-    * Messe die Anzahl von W-Bosonen-Zerfälle mit Muonen/Antimuonen und Elektronen/Positronen. Gibt es hier einen Unterschied. Ist dieser zu erwarten.
-    * Messe die Kinematik der W-Bosonen. Diese sind z.B. pT, eta, phi. Gibt es Unterschiede zur Theorie/Simulation?
+
+- Messe die Anzahl von positiv und negativ geladenen W-Bosonen. Was findest Du? Macht das Ergebnis Sinn?
+- Messe die Anzahl von W-Bosonen-Zerfälle mit Muonen/Antimuonen und Elektronen/Positronen. Gibt es hier einen Unterschied. Ist dieser zu erwarten.
+- Messe die Kinematik der W-Bosonen. Diese sind z.B. pT, eta, phi. Gibt es Unterschiede zur Theorie/Simulation?
     
 Um den W-Pfad zu wählen, wirst du weiter zum Ordner WPfad gehen und dieses README weiterlesen.
+
 **TO DO:** Dieser Pfad wurde noch nicht erarbeitet.
     
 ### Z-Pfad
 1.) Zuerst wirst du versuchen, Z-Bosonen zu rekonstruieren.
 
-2.) Dann wirst du versuchen, die Masse des Z-Bosons zu bestimmen.
-
-    2.a) Je nach Erfahrung kann dies unter Betrachtung des Physik-Untergrund geschehen oder nicht, und mithilfe eines kinematischen Fits oder nicht.
+2.) Dann wirst du versuchen, die Masse des Z-Bosons zu bestimmen. Je nach Erfahrung kann dies unter Betrachtung des Physik-Untergrund geschehen oder nicht, und mithilfe eines kinematischen Fits oder nicht.
 
 3.) Wenn Deine Zeit es zulässt, werden wir danach zusätzliche Fragestellungen erörtern. Dies kann zum Beispiel sein:
 
-    - Messe die Anzahl von Z-Bosonen-Zerfälle mit Muonen/Antimuonen und Elektronen/Positronen. Gibt es hier einen Unterschied. Ist dieser zu erwarten.
+- Messe die Anzahl von Z-Bosonen-Zerfälle mit Muonen/Antimuonen und Elektronen/Positronen. Gibt es hier einen Unterschied. Ist dieser zu erwarten.
     
-    - Messe die Kinematik der Z-Bosonen. Diese sind z.B. pT, eta, phi. Gibt es Unterschiede zur Theorie/Simulation?
+- Messe die Kinematik der Z-Bosonen. Diese sind z.B. pT, eta, phi. Gibt es Unterschiede zur Theorie/Simulation?
 
 Um den Z-Pfad zu wählen, wirst du weiter zum Ordner WPfad gehen und dieses README weiterlesen.
 
@@ -93,12 +94,16 @@ Um den Z-Pfad zu wählen, wirst du weiter zum Ordner WPfad gehen und dieses READ
 
     
 ### Higgs-Pfad
-1.) Zuerst wirst du versuchen, Higgs-Bosonen zu rekonstruieren.
-    1.) Hier gibt es den Vier-Lptonen und den Zwei-Photonen Pfad. Wir betrachten hier den Vier-Leptonen Pfad
+1.) Zuerst wirst du versuchen, Higgs-Bosonen zu rekonstruieren. Hier gibt es den Vier-Leptonen und den Zwei-Photonen Pfad. Wir betrachten hier den Vier-Leptonen Pfad
+
 2.) Kannst Du die Masse des Higgs Boson bestimmen. Hier ist es wichtig, den Untergrund zu kennen.
+
 3.) Wenn Deine Zeit es zulässt, werden wir danach zusätzliche Fragestellungen erörtern. Dies kann zum Beispiel sein:
-    * Messe die Anzahl von Higgs-Bosonen-Zerfälle mit Muonen/Antimuonen und Elektronen/Positronen. Wir haben drei Möglichkeiten. Ein Muon-Antimuon-Paar plus ein Elektron-Positron-Paar, oder zwei Muon-Antimuon-Paare oder zwei Eletron-Positron-Paare. Gibt es Unterschiede und sind diese zu erwarten.
-    * Messe die Kinematik der Higgs-Bosonen. Diese sind z.B. pT, eta, phi. Gibt es Unterschiede zur Theorie/Simulation?
+
+- Messe die Anzahl von Higgs-Bosonen-Zerfälle mit Muonen/Antimuonen und Elektronen/Positronen. Wir haben drei Möglichkeiten. Ein Muon-Antimuon-Paar plus ein Elektron-Positron-Paar, oder zwei Muon-Antimuon-Paare oder zwei Eletron-Positron-Paare. Gibt es Unterschiede und sind diese zu erwarten.
+
+- Messe die Kinematik der Higgs-Bosonen. Diese sind z.B. pT, eta, phi. Gibt es Unterschiede zur Theorie/Simulation?
     
 Um den Higgs-Pfad zu wählen, wirst du weiter zum Ordner HPfad gehen und dieses README weiterlesen.
+
 **TO DO:** Dieser Pfad wurde noch nicht erarbeitet.
