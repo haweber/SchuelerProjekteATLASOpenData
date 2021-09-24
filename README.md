@@ -56,7 +56,8 @@ https://github.com/haweber/SchuelerProjekteATLASOpenData
 
 Du kannst Sie zu deinem Laptop herunterladen, indem du entweder den Cod als ZIP-Datei herunterlädst. Oder besser noch es von git herunterlädst, z.B. durch ein Terminal-Command: `git clone https://github.com/haweber/SchuelerProjekteATLASOpenData.git`
 Natürlich muss dein Laptop git verstehen.
-Wenn Du technisch und im Programmieren schon genügend Erfahrung hast, kannst Du auch eine Fork von den Repository machen, und Deinen eigenen Code in Deine Fork hochladen. Ein Github Account ist kostenlos!
+Wenn Du technisch und im Programmieren schon genügend Erfahrung hast, kannst Du auch eine Fork von den Repository machen, und Deinen eigenen Code in Deine Fork hochladen. Ein Github Account ist kostenlos! Allerdings solltest Du dann ein Zertifikat erzeugen und das Projekt wie folgt herunterladen (verwende dein `username`):
+```git clone git@github.com:username/SchuelerProjekteATLASOpenData.git```
 
 Hier folgt eine Beschreibung der Projekte:
 
@@ -75,13 +76,19 @@ Um den W-Pfad zu wählen, wirst du weiter zum Ordner WPfad gehen und dieses READ
     
 ### Z-Pfad
 1.) Zuerst wirst du versuchen, Z-Bosonen zu rekonstruieren.
+
 2.) Dann wirst du versuchen, die Masse des Z-Bosons zu bestimmen.
+
     2.a) Je nach Erfahrung kann dies unter Betrachtung des Physik-Untergrund geschehen oder nicht, und mithilfe eines kinematischen Fits oder nicht.
+
 3.) Wenn Deine Zeit es zulässt, werden wir danach zusätzliche Fragestellungen erörtern. Dies kann zum Beispiel sein:
-    * Messe die Anzahl von Z-Bosonen-Zerfälle mit Muonen/Antimuonen und Elektronen/Positronen. Gibt es hier einen Unterschied. Ist dieser zu erwarten.
-    * Messe die Kinematik der Z-Bosonen. Diese sind z.B. pT, eta, phi. Gibt es Unterschiede zur Theorie/Simulation?
+
+    - Messe die Anzahl von Z-Bosonen-Zerfälle mit Muonen/Antimuonen und Elektronen/Positronen. Gibt es hier einen Unterschied. Ist dieser zu erwarten.
+    
+    - Messe die Kinematik der Z-Bosonen. Diese sind z.B. pT, eta, phi. Gibt es Unterschiede zur Theorie/Simulation?
 
 Um den Z-Pfad zu wählen, wirst du weiter zum Ordner WPfad gehen und dieses README weiterlesen.
+
 **TO DO:** Dieser Pfad wurde noch nicht erarbeitet.
 
     
