@@ -54,7 +54,14 @@ Wir haben drei Grundprojekte, welche W-, Z- oder Higgs-Bosonen analysieren. Je n
 Um die Projekte herunterzuladen, bitte schaue Sie dir hier an.
 https://github.com/haweber/SchuelerProjekteATLASOpenData
 
-Du kannst Sie zu deinem Laptop herunterladen, indem du entweder den Cod als ZIP-Datei herunterlädst. Oder besser noch es von git herunterlädst, z.B. durch ein Terminal-Command: `git clone https://github.com/haweber/SchuelerProjekteATLASOpenData.git`
+Die Daten, mit denen wir arbeiten werden, sind die ATLAS Open Data:
+http://opendata.atlas.cern/release/2020/documentation/datasets/intro.html .
+Dies sind Daten des ATLAS Experiments, die mit Hilfe von Proton-Proton-Kollisionen am LHC aufgenommen wurden. Diese Daten sind für die Öffentlichkeit freigegeben. Die ATLAS-Kollaboration hat die Daten schon vorbereitet, so sind beispielsweise alle Objekte wie Elektronen oder Muon schon rekonstruiert.
+
+Am Anfang wird das Daten-Format vielleicht nicht einfach zu verstehen sein, deswegen bespreche insbesondere den Bereich "Full list of branches and variables" mit deinem Betreuer.
+
+Das Ziel deines Projekt wird es sein, einen Analysepfad selbstständig auszuarbeiten und Resultate zu präsentieren. Doch wir haben dir einen Anfangs-Code zur Hilfestellung geschrieben. 
+Du kannst diesen zu deinem Laptop herunterladen, indem du entweder den Code als ZIP-Datei herunterlädst. Oder besser noch es von git herunterlädst, z.B. durch ein Terminal-Command: `git clone https://github.com/haweber/SchuelerProjekteATLASOpenData.git`
 Natürlich muss dein Laptop git verstehen.
 Wenn Du technisch und im Programmieren schon genügend Erfahrung hast, kannst Du auch eine Fork von den Repository machen, und Deinen eigenen Code in Deine Fork hochladen. Ein Github Account ist kostenlos! Allerdings solltest Du dann ein Zertifikat erzeugen und das Projekt wie folgt herunterladen (verwende dein `username`):
 ```git clone git@github.com:username/SchuelerProjekteATLASOpenData.git```
