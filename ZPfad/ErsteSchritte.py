@@ -49,11 +49,17 @@ def AnalyzeOneDataset(isdata, inputname, outputname):
         nleps = 0
         for ilep in range(event.lep_n):
             #ilep zeigt den Index innerhalb der lep_n branches da.
-            if event.lep_pt[ilep] < 20.*1000.:
+            if event.lep_pt[ilep] < 20.*1000.: #minimaler Impuls
                 continue
-            if abs(event.lep_eta[ilep]) > 2.5:
+            if abs(event.lep_eta[ilep]) > 2.5:#zentral im Detektor
                 continue
-            if not event.lep_isTightID[ilep]:
+            if not event.lep_isTightID[ilep]:#Klare Identifikation als Lepton
+                continue
+            if event.lep_ptcone30[ilep]/event.lep_pt[ilep]>0.15:#isoliert von anderen Objekten (Track basiert)
+                continue
+            if event.etcone20[ilep]/event.lep_pt[ilep]>0.15:#isoliert von anderen Objekten (Kalorimeter basiert)
+                continue
+            if event.lep_type[ilep]==11 and abs(event.lep_eta[ilep]) > 1.37 and abs(event.lep_eta[ilep]) > 1.52:#Besonderheit fuer Elektronen/Positronen
                 continue
             #Die selektierten Leptonen sind nun gut.
             nleps += 1
@@ -70,11 +76,17 @@ def AnalyzeOneDataset(isdata, inputname, outputname):
         #Um eine per Lepton-Analyse zu machen, muessen wir wieder eine for-Schleife schreiben
         for ilep in range(event.lep_n):
             #ilep zeigt den Index innerhalb der lep_n branches da.
-            if event.lep_pt[ilep] < 20.*1000.:
+            if event.lep_pt[ilep] < 20.*1000.: #minimaler Impuls
                 continue
-            if abs(event.lep_eta[ilep]) > 2.5:
+            if abs(event.lep_eta[ilep]) > 2.5:#zentral im Detektor
                 continue
-            if not event.lep_isTightID[ilep]:
+            if not event.lep_isTightID[ilep]:#Klare Identifikation als Lepton
+                continue
+            if event.lep_ptcone30[ilep]/event.lep_pt[ilep]>0.15:#isoliert von anderen Objekten (Track basiert)
+                continue
+            if event.etcone20[ilep]/event.lep_pt[ilep]>0.15:#isoliert von anderen Objekten (Kalorimeter basiert)
+                continue
+            if event.lep_type[ilep]==11 and abs(event.lep_eta[ilep]) > 1.37 and abs(event.lep_eta[ilep]) > 1.52:#Besonderheit fuer Elektronen/Positronen
                 continue
             #Hier speichern wir den transversalen Impuls der Leptonen ab.
             hLepPt.Fill(event.lep_pt[ilep]/1000.,eventweight)
@@ -84,11 +96,17 @@ def AnalyzeOneDataset(isdata, inputname, outputname):
                 if index1 >=0:
                     #Warum gibt es hier ein break Statement?
                     break
-                if event.lep_pt[jlep] < 20.*1000.:
+                if event.lep_pt[jlep] < 20.*1000.: #minimaler Impuls
                     continue
-                if abs(event.lep_eta[jlep]) > 2.5:
+                if abs(event.lep_eta[jlep]) > 2.5:#zentral im Detektor
                     continue
-                if not event.lep_isTightID[jlep]:
+                if not event.lep_isTightID[jlep]:#Klare Identifikation als Lepton
+                    continue
+                if event.lep_ptcone30[jlep]/event.lep_pt[jlep]>0.15:#isoliert von anderen Objekten (Track basiert)
+                    continue
+                if event.etcone20[jlep]/event.lep_pt[jlep]>0.15:#isoliert von anderen Objekten (Kalorimeter basiert)
+                    continue
+                if event.lep_type[jlep]==11 and abs(event.lep_eta[jlep]) > 1.37 and abs(event.lep_eta[jlep]) > 1.52:#Besonderheit fuer Elektronen/Positronen
                     continue
                 #Wir wollen ein e+e- oder ein mu+mu- Paar auswaehlen.
                 #Zuerst testen wir den Lepton-Flavor. Uebrigens, fuer Elektronen/Positronen ist der Wert von lep_type 11, fuer Muonen ist er 13.

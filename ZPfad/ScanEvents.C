@@ -119,17 +119,17 @@ int ScanEvents(TChain* chain, string outname, bool isdata, bool fast, int nEvent
       int index1(-1), index2(-1);
       for(unsigned int ilep = 0; ilep<lep_n(); ++ilep){
 	//ilep zeigt den Index innerhalb der lep_n branches da. Man ruft diesen Eintrag mit [index] auf.
-	if(lep_pt()[ilep] < 25.*1000.)
+	if(lep_pt()[ilep] < 25.*1000.)//minimaler Impuls
 	  continue;
-	if(abs(lep_eta()[ilep]) > 2.5)
+	if(abs(lep_eta()[ilep]) > 2.5)//zentral im Detektor
 	  continue;
-	if(!lep_isTightID()[ilep])
+	if(!lep_isTightID()[ilep])//klare Identifizierung als Lepton
 	  continue;
-	if(lep_ptcone30()[ilep]/lep_pt()[ilep]>0.15)
+	if(lep_ptcone30()[ilep]/lep_pt()[ilep]>0.15)//isoliert von anderen Objekten (Track basiert)
 	  continue;
-	if(lep_etcone20()[ilep]/lep_pt()[ilep]>0.15)
+	if(lep_etcone20()[ilep]/lep_pt()[ilep]>0.15)//isoliert von anderen Objekten (Kalorimeter basiert)
 	  continue;
-	if(lep_type()[ilep]==11 && abs(lep_eta()[ilep])>1.37 && abs(lep_eta()[ilep])<1.52)
+	if(lep_type()[ilep]==11 && abs(lep_eta()[ilep])>1.37 && abs(lep_eta()[ilep])<1.52)//Besonderheit fuer Elektronen/Positronen
 	  continue;
 	//Die selektierten Leptonen sind nun gut.
 	++nleps;
