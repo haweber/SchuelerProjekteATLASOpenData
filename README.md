@@ -41,7 +41,10 @@ Frage Deinen Betreuer für Die Daten.
 Natürlich können wir die Daten mit Billionen von Ereignissen nicht mit dieser Methode analysieren, sondern müssen dies systematischer machen.
 Unsere Analyse-Tool in der Hochenergiephysik/Teilchenphysik ist ROOT.
 Gehe zum Beispiel zu diesem Release und installiere das richtige Package für Dein Betriebssystem: https://root.cern/releases/release-62400/
-Wenn Du ein Instituts-PC verwendest, wird höchstwahrscheinlich schon eine Version von ROOT installiert sein.
+Wenn Du ein Instituts-PC verwendest, wird höchstwahrscheinlich schon eine Version von ROOT installiert sein:
+- Arbeitest du auf dem DESY Cluster, lädst du ROOT mit diesem Befehl:
+```source /cvmfs/sft.cern.ch/lcg/app/releases/ROOT/6.08.04/x86_64-centos7-gcc48-opt/root/bin/thisroot.sh
+```
 
 Je nachdem, wie Du die Daten analysieren willst, brauchst du eventuell noch weitere Installationen, zum Beispiel: Falls Du bereits weißt, wie man mit Python programmiert, möchtest Du eventuell ROOT mit Python verwenden. In jenem Fall, muss dein PC natürlich Python haben.
 
@@ -97,8 +100,6 @@ Um den W-Pfad zu wählen, wirst du weiter zum Ordner WPfad gehen und dieses READ
 
 Um den Z-Pfad zu wählen, wirst du weiter zum Ordner WPfad gehen und dieses README weiterlesen.
 
-**TO DO:** Dieser Pfad wurde noch nicht erarbeitet.
-
     
 ### Higgs-Pfad
 1.) Zuerst wirst du versuchen, Higgs-Bosonen zu rekonstruieren. Hier gibt es den Vier-Leptonen und den Zwei-Photonen Pfad. Wir betrachten hier den Vier-Leptonen Pfad
@@ -114,3 +115,14 @@ Um den Z-Pfad zu wählen, wirst du weiter zum Ordner WPfad gehen und dieses READ
 Um den Higgs-Pfad zu wählen, wirst du weiter zum Ordner HPfad gehen und dieses README weiterlesen.
 
 **TO DO:** Dieser Pfad wurde noch nicht erarbeitet.
+
+
+## Dokumentation
+
+### Figuren
+
+Ein Teil, deine Ergebnisse zu dokumentieren, ist es Grafiken und Tabellen zu erzeugen. Während ich dir es überlasse, eine Tabelle zu erzeugen, habe ich für die Grafikerzeugung ein Skript geschrieben, welches für alle Pfade funktioniert.
+Es gibt es als MakePlot.C, aber hier beschreibe ich, wie man die Python-Version benutzt.
+Grundsätzlich solltest du nichts am Python-Skript zu verändern brauchen, allerdings kannst du ganz am Ende die Funktionen sehen. Du kannst das Skript wie in MakingMultiplePlots.sh per Kommandozeile erzeugen.
+Mit `source MakingMultiplePlots.sh` erzeugst du die drei Default-Plots vom Z-Pfad, die durch den bereits vorhandenen Code schon erstellt werden. Achtung, du musst dabei den Pfad zu deinen Verzeichnissen ändern, z.B. wenn du den W-Pfad bearbeitest. Ich hoffe die Beschreibung ist selbsterklärend, ansonsten sprich mit deinem Betreuer.
+Sowohl das py-Skript als auch C-Macro lesen die Histogramme auch über eine txt-Datei ein. Der Grund für diesen Aufbau ist es, dass z.B. im ZPfad du einmal Z->ee/Z->mumu getrennt und ein andermal zusammengefasst betrachten willst. In der txt-Datei, welche im Beispiel  verwendet wird (z.B. ZPfad/output/filelist_Zll.txt) gibt es erklärende Kommentarzeilen (die, die mit # beginnen), die auch dieses Format erklären.
