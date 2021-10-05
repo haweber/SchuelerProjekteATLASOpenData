@@ -51,6 +51,7 @@ def main(args):
     colors = dict()
     isdata = dict()
     stacks = dict()
+    sampleids = dict()
 
     
     leg = ROOT.TLegend(0.5,0.775,0.85,0.9025,"","brNDC")
@@ -97,6 +98,8 @@ def main(args):
                     if h == histonames[0]:
                         leg.AddEntry(histos[hname],legname,"ep")
                 else:
+                    if sampleid not in sampleids:
+                        sampleids[sampleid] = sampleid
                     if args.scale!=1:
                         histos[hname].Scale(args.scale)
                     if hnameMC not in histos:
@@ -146,6 +149,10 @@ def main(args):
     
 
     for h in histonames:
+        #do three ifs so that the tables are each separated...
+        if args.printtable or args.printcsv or args.printlatex:
+            PrintTable(h,histos,sampleids,args.printtable,args.printcsv,args.printlatex)
+
         maximum = -1
         if args.yMax>0:
             maximum = args.yMax
@@ -259,28 +266,124 @@ def main(args):
     return True
 
 
+def PrintTable(h,histos,sampleids,printsimple,printcsv,printlatex,roundprecision=1):
+    lengthsimple = 25
+    tablesimple = []
+    tablecsv = []
+    tablelatex = []
+    tableline = ""
+    lengthtable = (lengthsimple+3)*(len(sampleids)+3)+(lengthsimple/2+3)+1
+    #First the Simple Table
+    tablesimple.append('-'*lengthtable)
+    tableline = '| '+'Binning'.ljust(lengthsimple)+' | '
+    for s in sampleids:
+        tableline += (sampleids[s].ljust(lengthsimple)+' | ')
+    tableline += ('Simulation Sum'.ljust(lengthsimple)+' | ')
+    tableline += ('Data'.ljust(lengthsimple/2)+' | ')
+    tableline += ('Ratio'.ljust(lengthsimple)+' |')
+    tablesimple.append(tableline)
+    tablesimple.append('-'*lengthtable)
+    for i in range(1,histos[h+"_Data"].GetNbinsX()+1):
+        tableline = '| '+(str(histos[h+"_Data"].GetBinLowEdge(i))+'-'+str(histos[h+"_Data"].GetBinLowEdge(i+1))).ljust(lengthsimple) + ' | '
+        for s in sampleids:
+            #tableline += ((str(round(histos[h+"_"+sampleids[s] ].GetBinContent(i),roundprecision)) + ' +/- ' + str(round(histos[h+"_"+sampleids[s] ].GetBinError(i),roundprecision))).ljust(lengthsimple) + ' | ')
+            tableline += ((str(round(histos[h+"_"+sampleids[s] ].GetBinContent(i),roundprecision+1)).ljust((lengthsimple-5)/2) + ' +/- ' + str(round(histos[h+"_"+sampleids[s] ].GetBinError(i),roundprecision+1)).ljust((lengthsimple-5)/2)) + ' | ')
+        #tableline += ((str(round(histos[h+"_SimSum" ].GetBinContent(i),roundprecision)) + ' +/- ' + str(round(histos[h+"_SimSum" ].GetBinError(i),roundprecision))).ljust(lengthsimple) + ' | ')
+        tableline += ((str(round(histos[h+"_SimSum" ].GetBinContent(i),roundprecision+1)).ljust((lengthsimple-5)/2) + ' +/- ' + str(round(histos[h+"_SimSum" ].GetBinError(i),roundprecision+1)).ljust((lengthsimple-5)/2)) + ' | ')
+        tableline += (str(int(histos[h+"_Data" ].GetBinContent(i))).ljust(lengthsimple/2) + ' | ')
+        #tableline += ((str(round(histos[h+"_Ratio" ].GetBinContent(i),roundprecision+1)) + ' +/- ' + str(round(histos[h+"_Ratio" ].GetBinError(i),roundprecision+1))).ljust(lengthsimple) + ' | ')
+        tableline += ((str(round(histos[h+"_Ratio" ].GetBinContent(i),roundprecision+1)).ljust((lengthsimple-5)/2) + ' +/- ' + str(round(histos[h+"_Ratio" ].GetBinError(i),roundprecision+1)).ljust((lengthsimple-5)/2)) + ' | ')
+        tablesimple.append(tableline)
+    tablesimple.append('-'*lengthtable)
+
+    #Now the CSV table
+    tablecsv.append('-'*lengthtable)
+    tableline = 'Binning low,Binning high,'
+    for s in sampleids:
+        tableline += sampleids[s] +',' +sampleids[s]+ ' Uncertainty,'
+    tableline += 'Simulation Sum,Simulation Sum Uncertainty,Data,Ratio,Ratio Uncertainty'
+    tablecsv.append(tableline)
+    for i in range(1,histos[h+"_Data"].GetNbinsX()+1):
+        tableline = str(histos[h+"_Data"].GetBinLowEdge(i))+','+str(histos[h+"_Data"].GetBinLowEdge(i+1)) +','
+        for s in sampleids:
+            tableline += str(round(histos[h+"_"+sampleids[s] ].GetBinContent(i),roundprecision+1))+','+str(round(histos[h+"_"+sampleids[s] ].GetBinError(i),roundprecision+1))+','
+        tableline += str(round(histos[h+"_SimSum" ].GetBinContent(i),roundprecision+1))+','+str(round(histos[h+"_SimSum" ].GetBinError(i),roundprecision+1))+','
+        tableline += str(int(histos[h+"_Data" ].GetBinContent(i)))+','
+        tableline += str(round(histos[h+"_Ratio" ].GetBinContent(i),roundprecision+2))+','+str(round(histos[h+"_Ratio" ].GetBinError(i),roundprecision+2))
+        tablecsv.append(tableline)
+    tablecsv.append('-'*lengthtable)
+
+    #Finally Latex table
+    tablelatex.append('\\begin{table}[htb]')
+    tablelatex.append('\\caption{\\label{tab:somelabel}Here goes the caption.}')
+    tablelatex.append('\\centering')
+    tablelatex.append('\\begin{tabular}{|l|'+'c'*(len(sampleids)+1)+'|c|c|}')
+    tablelatex.append('\\hline')
+    tableline = '  Binning'.ljust(lengthsimple)+' & '
+    for s in sampleids:
+        tableline += (sampleids[s].ljust(lengthsimple)+' & ')
+    tableline += ('Simulation Sum'.ljust(lengthsimple)+' & ')
+    tableline += ('Data'.ljust(lengthsimple/2)+' & ')
+    tableline += ('Ratio'.ljust(lengthsimple)+'  \\\\')
+    tablelatex.append(tableline)
+    tablelatex.append('\\hline')
+    for i in range(1,histos[h+"_Data"].GetNbinsX()+1):
+        tableline = ' '+(str(histos[h+"_Data"].GetBinLowEdge(i))+'--'+str(histos[h+"_Data"].GetBinLowEdge(i+1))).ljust(lengthsimple) + ' & '
+        for s in sampleids:
+            tableline += '$'+(str(round(histos[h+"_"+sampleids[s] ].GetBinContent(i),roundprecision+1)).ljust((lengthsimple-5)/2) + ' \\pm ' + str(round(histos[h+"_"+sampleids[s] ].GetBinError(i),roundprecision+1)).ljust((lengthsimple-5)/2) + '$ & ')
+        tableline += '$'+(str(round(histos[h+"_SimSum" ].GetBinContent(i),roundprecision+1)).ljust((lengthsimple-5)/2) + ' \\pm ' + str(round(histos[h+"_SimSum" ].GetBinError(i),roundprecision+1)).ljust((lengthsimple-5)/2) + '$ & ')
+        tableline += '$'+(str(int(histos[h+"_Data" ].GetBinContent(i))).ljust(lengthsimple/2) + '$ & ')
+        tableline += '$'+(str(round(histos[h+"_Ratio" ].GetBinContent(i),roundprecision+1)).ljust((lengthsimple-5)/2) + ' \\pm ' + str(round(histos[h+"_Ratio" ].GetBinError(i),roundprecision+1)).ljust((lengthsimple-5)/2) + '$ \\\\')
+        tablelatex.append(tableline)
+
+    tablelatex.append('\\hline')
+    tablelatex.append('\\end{tabular}')
+    tablelatex.append('\\end{table}')
+        
+    if printsimple:
+        print("Simple table for "+h)
+        for line in tablesimple:
+            print(line)
+        print("")
+    if printcsv:
+        print("CSV table for "+h)
+        for line in tablecsv:
+            print(line)
+        print("")
+    if printlatex:
+        print("Latex table for "+h)
+        for line in tablelatex:
+            print(line)
+        print("")
+    #1234 +/- 123
+    #1.23E+07 +/- 1.23E+03
+    #12345678901234567890123
+
 
 if __name__ == "__main__":
 
     # Define options
     parser = argparse.ArgumentParser(description="Plotter for VVV analysis")
-    parser.add_argument('-f' , '--filelist'  , dest='filelist' , help='List of Files, through text file'            , type=str  , required=True)
-    parser.add_argument('-o' , '--outdir'    , dest='outdir'   , help='output directory where file is stored'       , type=str  , required=True)
-    parser.add_argument('-t' , '--tag'       , dest='tag'      , help='tag of analysis, either ZPfad, WPfad, HPfad' , type=str  , required=True)
-    parser.add_argument('-s' , '--scale'     , dest='scale'    , help='scale simulation'                            , type=float, required=False, default=1.)
-    parser.add_argument('-hn', '--histname'  , dest='histname' , help='name of the histogram'                       , type=str  , required=True)
-    parser.add_argument('-ht', '--histtitle' , dest='histtitle', help='Title of histogram'                          , type=str  , required=False, default="")
-    parser.add_argument('-xt', '--xtitle'    , dest='xtitle'   , help='Title of x axis'                             , type=str  , required=False, default="")
-    parser.add_argument('-yt', '--ytitle'    , dest='ytitle'   , help='Title of y axis'                             , type=str  , required=False, default="")
-    parser.add_argument('-l' , '--yaxis_log' , dest='yaxis_log', help='Y-axis set to log'                           ,                             default=False, action='store_true') 
-    parser.add_argument('-of', '--overflow'  , dest='overflow' , help='Add overflow'                                ,                             default=False, action='store_true') 
-    parser.add_argument('-uf', '--underflow' , dest='underflow', help='Add underflow'                               ,                             default=False, action='store_true') 
-    parser.add_argument('-xn', '--xMin'      , dest='xMin'     , help='X-axis range setting'                        , type=float, required=False, default=-999.) 
-    parser.add_argument('-xx', '--xMax'      , dest='xMax'     , help='X-axis range setting'                        , type=float, required=False, default=-999.)
-    parser.add_argument('-yn', '--yMin'      , dest='yMin'     , help='Y-axis range setting'                        , type=float, required=False, default=-999.) 
-    parser.add_argument('-yx', '--yMax'      , dest='yMax'     , help='Y-axis range setting'                        , type=float, required=False, default=-999.)  
-    parser.add_argument('-rn', '--rMin'      , dest='rMin'     , help='ratio range setting'                         , type=float, required=False, default=0.5) 
-    parser.add_argument('-rx', '--rMax'      , dest='rMax'     , help='ratio range setting'                         , type=float, required=False, default=1.5)  
+    parser.add_argument('-f' , '--filelist'    , dest='filelist'  , help='List of Files, through text file'            , type=str  , required=True)
+    parser.add_argument('-o' , '--outdir'      , dest='outdir'    , help='output directory where file is stored'       , type=str  , required=True)
+    parser.add_argument('-t' , '--tag'         , dest='tag'       , help='tag of analysis, either ZPfad, WPfad, HPfad' , type=str  , required=True)
+    parser.add_argument('-s' , '--scale'       , dest='scale'     , help='scale simulation'                            , type=float, required=False, default=1.)
+    parser.add_argument('-hn', '--histname'    , dest='histname'  , help='name of the histogram'                       , type=str  , required=True)
+    parser.add_argument('-ht', '--histtitle'   , dest='histtitle' , help='Title of histogram'                          , type=str  , required=False, default="")
+    parser.add_argument('-xt', '--xtitle'      , dest='xtitle'    , help='Title of x axis'                             , type=str  , required=False, default="")
+    parser.add_argument('-yt', '--ytitle'      , dest='ytitle'    , help='Title of y axis'                             , type=str  , required=False, default="")
+    parser.add_argument('-l' , '--yaxis_log'   , dest='yaxis_log' , help='Y-axis set to log'                           ,                             default=False, action='store_true') 
+    parser.add_argument('-of', '--overflow'    , dest='overflow'  , help='Add overflow'                                ,                             default=False, action='store_true') 
+    parser.add_argument('-uf', '--underflow'   , dest='underflow' , help='Add underflow'                               ,                             default=False, action='store_true') 
+    parser.add_argument('-xn', '--xMin'        ,  dest='xMin'      , help='X-axis range setting'                        , type=float, required=False, default=-999.) 
+    parser.add_argument('-xx', '--xMax'        , dest='xMax'      , help='X-axis range setting'                        , type=float, required=False, default=-999.)
+    parser.add_argument('-yn', '--yMin'        , dest='yMin'      , help='Y-axis range setting'                        , type=float, required=False, default=-999.) 
+    parser.add_argument('-yx', '--yMax'        , dest='yMax'      , help='Y-axis range setting'                        , type=float, required=False, default=-999.)  
+    parser.add_argument('-rn', '--rMin'        , dest='rMin'      , help='ratio range setting'                         , type=float, required=False, default=0.5) 
+    parser.add_argument('-rx', '--rMax'        , dest='rMax'      , help='ratio range setting'                         , type=float, required=False, default=1.5)  
+    parser.add_argument('-p' , '--printtable'  , dest='printtable', help='Make a very simple table'                    ,                             default=False, action='store_true') 
+    parser.add_argument('-pc' , '--printcsv'   , dest='printcsv'  , help='Make a csv table'                            ,                             default=False, action='store_true') 
+    parser.add_argument('-pl' , '--printlatex' , dest='printlatex', help='Make a latex table'                          ,                             default=False, action='store_true') 
     # Argument parser
     args = parser.parse_args()
     args.tag

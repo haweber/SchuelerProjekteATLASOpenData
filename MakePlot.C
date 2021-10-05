@@ -1,8 +1,21 @@
 #include <sys/stat.h>
 #include <iostream>
 #include <fstream>
-#include "map"
+#include <sstream>
+#include <map>
+#include <cmath>
+#include <string>
+#include <vector>
+#include "TLatex.h"
+#include "TLegend.h"
+#include "TPad.h"
+#include "TCanvas.h"
+#include "THStack.h"
+#include "TH1F.h"
+#include "TH1.h"
+#include "TLine.h"
 
+using namespace std;
 
 
 map<string, int> MyColor{
@@ -24,9 +37,11 @@ map<string, int> MyColor{
 };
 
 void MakeMultiplePlots();//gan am Ende
-bool MakePlot(string filelist, string outdir, string tag, string histname, float scale = 1, string histtitle="", string xtitle="", string ytitle="", bool yaxis_log = false, bool overflow = true, bool underflow = true, float xMin = -999, float xMax = -999., float yMin = -999., float yMax = -999., float rMin = 0.5, float rMax = 1.5);
+bool MakePlot(string filelist, string outdir, string tag, string histname, float scale = 1, string histtitle="", string xtitle="", string ytitle="", bool yaxis_log = false, bool overflow = true, bool underflow = true, float xMin = -999, float xMax = -999., float yMin = -999., float yMax = -999., float rMin = 0.5, float rMax = 1.5, bool printsimple=false, bool printcsv=false, bool printlatex=false, int roundprecision=1);
 bool IsPathExist(const std::string &s);
 int ColorTranslator(string s);
+void PrintTables(string h, map<string,TH1F*> histos, map<string,string> sampleids, bool printsimple, bool printcsv, bool printlatex, int roundprecision=1);
+
   
 bool IsPathExist(const std::string &s)
 {
@@ -55,7 +70,7 @@ int ColorTranslator(string s){
   return MyColor[s];
 }
 
-bool MakePlot(string filelist, string outdir, string tag, string histname, float scale, string histtitle, string xtitle, string ytitle, bool yaxis_log, bool overflow, bool underflow, float xMin, float xMax, float yMin, float yMax, float rMin, float rMax){
+bool MakePlot(string filelist, string outdir, string tag, string histname, float scale, string histtitle, string xtitle, string ytitle, bool yaxis_log, bool overflow, bool underflow, float xMin, float xMax, float yMin, float yMax, float rMin, float rMax, bool printsimple, bool printcsv, bool printlatex, int roundprecision){
 
   gStyle->SetOptStat(0);
 
@@ -63,6 +78,7 @@ bool MakePlot(string filelist, string outdir, string tag, string histname, float
   map<string,string> legnames;
   map<string,int> colors;
   map<string,bool> isdata;
+  map<string,string> sampleids;
 
   cout << "You are plotting histogram(s) " << histname << " for " << tag <<  " to output directory " << outdir << endl << "Files used are given in " << filelist << endl;
   string outname = outdir;
@@ -139,6 +155,7 @@ bool MakePlot(string filelist, string outdir, string tag, string histname, float
       leg->AddEntry(histos[hname],legname.c_str(),"ep");
     }
     else{
+      sampleids[sampleid] = sampleid;
       histos[hname]->Scale(scale);
       if(histos.count(hnameMC) == 0 ){
 	histos[hnameMC] = (TH1F*)histos[hname]->Clone(hnameMC.c_str());
@@ -162,6 +179,8 @@ bool MakePlot(string filelist, string outdir, string tag, string histname, float
   //Got all histograms
   histos[histname+"_Ratio"] = (TH1F*)histos[histname+"_Data"]->Clone((histname+"_Ratio").c_str());
   histos[histname+"_Ratio"]->Divide(histos[histname+"_SimSum"]);
+
+  PrintTables(histname,histos,sampleids,printsimple,printcsv,printlatex,roundprecision);
   
   TLatex *tLumi = new TLatex(0.95,0.955,"10 fb^{-1} (13 TeV)");
   tLumi->SetNDC();
@@ -309,14 +328,115 @@ bool MakePlot(string filelist, string outdir, string tag, string histname, float
 
 }
 
+void PrintTables(string h, map<string,TH1F*> histos, map<string,string> sampleids, bool printsimple, bool printcsv, bool printlatex, int roundprecision){
+  int lengthsimple = 25;
+  std::ostringstream* tablesimple    = new std::ostringstream();
+  std::ostringstream* tablecsv   = new std::ostringstream();
+  std::ostringstream* tablelatex = new std::ostringstream();
+  std::ostringstream* temp = new std::ostringstream();
+  int lengthtable = (lengthsimple+3)*(sampleids.size()+3)+((lengthsimple)/2+3)+1;
+
+  //First the Simple Table
+  *tablesimple << (string(lengthtable, '-')) << endl;
+  *tablesimple << "| " << setw(lengthsimple)<< left << "Binning" << " | ";
+  
+  for (auto it = sampleids.rbegin(); it != sampleids.rend(); ++it) {
+    *tablesimple << setw(lengthsimple) << it->second << " | ";
+  }
+  *tablesimple << setw(lengthsimple)<< "Simulation Sum" << " | " << setw(lengthsimple/2) << "Data" << " | " << setw(lengthsimple) << "Ratio" << " |" << endl;
+  *tablesimple << (string(lengthtable, '-')) << endl;
+  for(int i = 1; i<=histos[h+"_Data"]->GetNbinsX(); ++i){
+    *temp << histos[h+"_Data"]->GetBinLowEdge(i) << "-" << histos[h+"_Data"]->GetBinLowEdge(i+1);
+    *tablesimple << "| " << setw(lengthsimple) << temp->str() << " | "; temp->str(""); temp->clear();
+    for (auto it = sampleids.rbegin(); it != sampleids.rend(); ++it) {
+      *temp << fixed << setprecision(2) <<histos[h+"_"+it->second]->GetBinContent(i) << " +/- " << histos[h+"_"+it->second]->GetBinError(i);
+      *tablesimple << setw(lengthsimple) << temp->str() << " | ";  temp->str(""); temp->clear();
+    }
+      *temp << fixed << setprecision(2) <<histos[h+"_SimSum"]->GetBinContent(i) << " +/- " << histos[h+"_SimSum"]->GetBinError(i);
+      *tablesimple << setw(lengthsimple) << temp->str() << " | "; temp->str(""); temp->clear();
+      *temp << fixed << setprecision(0) <<histos[h+"_Data"]->GetBinContent(i);
+      *tablesimple << setw(lengthsimple/2) << temp->str() << " | "; temp->str(""); temp->clear();
+      *temp << fixed << setprecision(2) <<histos[h+"_Ratio"]->GetBinContent(i) << " +/- " << histos[h+"_Ratio"]->GetBinError(i);
+      *tablesimple << setw(lengthsimple) << temp->str() << " | "; temp->str(""); temp->clear();
+      *tablesimple << endl;
+  }
+  *tablesimple << (string(lengthtable, '-')) << endl;
+  
+  //Now the CSV table
+  *tablecsv << (string(lengthtable, '-')) << endl;
+  *tablecsv << "Binning low,Binning high,";
+  for (auto it = sampleids.rbegin(); it != sampleids.rend(); ++it) {
+    *tablecsv << it->second +"," +it->second+ " Uncertainty,";
+  }
+  *tablecsv << "Simulation Sum,Simulation Sum Uncertainty,Data,Ratio,Ratio Uncertainty" << endl;
+  for(int i = 1; i<=histos[h+"_Data"]->GetNbinsX(); ++i){
+    *tablecsv << histos[h+"_Data"]->GetBinLowEdge(i) << "," << histos[h+"_Data"]->GetBinLowEdge(i+1) <<",";
+    for (auto it = sampleids.rbegin(); it != sampleids.rend(); ++it) {
+      *tablecsv << fixed << setprecision(2) <<histos[h+"_"+it->second]->GetBinContent(i) << "," << histos[h+"_"+it->second]->GetBinError(i) << ",";
+    }
+    *tablecsv << fixed << setprecision(2) <<histos[h+"_SimSum"]->GetBinContent(i) << "," << histos[h+"_SimSum"]->GetBinError(i) << ",";
+    *tablecsv << fixed << setprecision(2) <<histos[h+"_Data"]->GetBinContent(i) << ",";
+    *tablecsv << fixed << setprecision(2) <<histos[h+"_Ratio"]->GetBinContent(i) << "," << histos[h+"_Ratio"]->GetBinError(i) << endl;
+  }
+  *tablecsv << (string(lengthtable, '-')) << endl;
+
+
+  //Finally Latex table
+  *tablelatex << "\\begin{table}[htb]" << endl;
+  *tablelatex << "\\caption{\\label{tab:somelabel}Here goes the caption.}" << endl;
+  *tablelatex << "\\centering" << endl;
+  *tablelatex << "\\begin{tabular}{|l|" << string(sampleids.size()+1,'c') << "|c|c|}" << endl;
+  *tablelatex << "\\hline" << endl;
+  *tablelatex << "  " << setw(lengthsimple) << left << "Binning" << " & ";
+  for (auto it = sampleids.rbegin(); it != sampleids.rend(); ++it) {
+    *tablelatex << setw(lengthsimple) << it->second << " & ";
+  }
+  *tablelatex << setw(lengthsimple)<< "Simulation Sum" << " & " << setw(lengthsimple/2) << "Data" << " & " << setw(lengthsimple) << "Ratio" << " \\\\" << endl;
+  *tablelatex << "\\hline" << endl;
+  for(int i = 1; i<=histos[h+"_Data"]->GetNbinsX(); ++i){
+    *temp << histos[h+"_Data"]->GetBinLowEdge(i) << "--" << histos[h+"_Data"]->GetBinLowEdge(i+1);
+    *tablelatex << "  " << setw(lengthsimple) << temp->str() << " & "; temp->str(""); temp->clear();
+    for (auto it = sampleids.rbegin(); it != sampleids.rend(); ++it) {
+      *temp << fixed << setprecision(2) << "$" << histos[h+"_"+it->second]->GetBinContent(i) << " \\pm " << histos[h+"_"+it->second]->GetBinError(i) << "$";
+      *tablelatex << setw(lengthsimple) << temp->str() << " & ";  temp->str(""); temp->clear();
+    }
+      *temp << fixed << setprecision(2) << "$" << histos[h+"_SimSum"]->GetBinContent(i) << " \\pm " << histos[h+"_SimSum"]->GetBinError(i) << "$";
+      *tablelatex << setw(lengthsimple) << temp->str() << " & "; temp->str(""); temp->clear();
+      *temp << fixed << setprecision(0) << "$" << histos[h+"_Data"]->GetBinContent(i) << "$";
+      *tablelatex << setw(lengthsimple/2) << temp->str() << " & "; temp->str(""); temp->clear();
+      *temp << fixed << setprecision(2) << "$" << histos[h+"_Ratio"]->GetBinContent(i) << " \\pm " << histos[h+"_Ratio"]->GetBinError(i) << "$";
+      *tablelatex << setw(lengthsimple) << temp->str() << " \\\\"; temp->str(""); temp->clear();
+      *tablelatex << endl;
+  }
+  *tablelatex << "\\hline" << endl;
+  *tablelatex << "\\end{tabular}" << endl;
+  *tablelatex << "\\end{table}" << endl;
+
+  if(printsimple){
+    cout << "Print a simple table for " << h << endl;
+    cout << tablesimple->str().c_str();
+  }
+  if(printcsv){
+    cout << "Print a csv table for " << h << endl;
+    cout << tablecsv->str().c_str();
+  }
+  if(printlatex){
+    cout << "Print a latex table for " << h << endl;
+    cout << tablelatex->str().c_str();
+  }
+  delete tablesimple;
+  delete tablecsv;
+  delete tablelatex;
+  delete temp;
+};
 
 
 
 void MakeMultiplePlots(){
-  //bool MakePlot(string filelist, string outdir, string tag, string histname, float scale = 1, string histtitle="", string xtitle="", string ytitle="", bool yaxis_log = false, bool overflow = true, bool underflow = true, float xMin = -999, float xMax = -999., float yMin = -999., float yMax = -999., float rMin = 0.5, float rMax = 1.5);
+  //bool MakePlot(string filelist, string outdir, string tag, string histname, float scale = 1, string histtitle="", string xtitle="", string ytitle="", bool yaxis_log = false, bool overflow = true, bool underflow = true, float xMin = -999, float xMax = -999., float yMin = -999., float yMax = -999., float rMin = 0.5, float rMax = 1.5, bool printsimple=false, bool printcsv=false, bool printlatex=false);
 
-  MakePlot("ZPfad/output/filelist_Zll.txt","ZPfad/output/plots/","ZPfad","hMll",  1., "", "m_{ll} [GeV]",    "Events / 5 GeV",   true,  true, true, -999,-999,-999,-999,0.5,1.5);
-  MakePlot("ZPfad/output/filelist_Zll.txt","ZPfad/output/plots/","ZPfad","hNLeps",1., "", "n_{leptons}",     "Events / 1",       false, true, true, -999,-999,-999,-999,0.5,1.5);
-  MakePlot("ZPfad/output/filelist_Zll.txt","ZPfad/output/plots/","ZPfad","hLepPt",1., "", "lep-p_{T} [GeV]", "leptons / 10 GeV", true,  true, true, -999,-999,-999,-999,0.5,1.5);
+  MakePlot("ZPfad/output/filelist_Zll.txt","ZPfad/output/plots/","ZPfad","hMll",  1., "", "m_{ll} [GeV]",    "Events / 5 GeV",   true,  true, true, -999,-999,-999,-999,0.5,1.5,false,false,false);
+  MakePlot("ZPfad/output/filelist_Zll.txt","ZPfad/output/plots/","ZPfad","hNLeps",1., "", "n_{leptons}",     "Events / 1",       false, true, true, -999,-999,-999,-999,0.5,1.5,false,false,false);
+  MakePlot("ZPfad/output/filelist_Zll.txt","ZPfad/output/plots/","ZPfad","hLepPt",1., "", "lep-p_{T} [GeV]", "leptons / 10 GeV", true,  true, true, -999,-999,-999,-999,0.5,1.5,false,false,false);
 
 }

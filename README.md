@@ -119,10 +119,14 @@ Um den Higgs-Pfad zu wählen, wirst du weiter zum Ordner HPfad gehen und dieses 
 
 ## Dokumentation
 
-### Figuren
+### Figuren und Tabellen
 
-Ein Teil, deine Ergebnisse zu dokumentieren, ist es Grafiken und Tabellen zu erzeugen. Während ich dir es überlasse, eine Tabelle zu erzeugen, habe ich für die Grafikerzeugung ein Skript geschrieben, welches für alle Pfade funktioniert.
+Ein Teil, deine Ergebnisse zu dokumentieren, ist es Grafiken und Tabellen zu erzeugen. Ich habe für die Grafikerzeugung ein Skript geschrieben, welches für alle Pfade funktioniert.
 Es gibt es als MakePlot.C, aber hier beschreibe ich, wie man die Python-Version benutzt.
 Grundsätzlich solltest du nichts am Python-Skript zu verändern brauchen, allerdings kannst du ganz am Ende die Funktionen sehen. Du kannst das Skript wie in MakingMultiplePlots.sh per Kommandozeile erzeugen.
 Mit `source MakingMultiplePlots.sh` erzeugst du die drei Default-Plots vom Z-Pfad, die durch den bereits vorhandenen Code schon erstellt werden. Achtung, du musst dabei den Pfad zu deinen Verzeichnissen ändern, z.B. wenn du den W-Pfad bearbeitest. Ich hoffe die Beschreibung ist selbsterklärend, ansonsten sprich mit deinem Betreuer.
 Sowohl das py-Skript als auch C-Macro lesen die Histogramme auch über eine txt-Datei ein. Der Grund für diesen Aufbau ist es, dass z.B. im ZPfad du einmal Z->ee/Z->mumu getrennt und ein andermal zusammengefasst betrachten willst. In der txt-Datei, welche im Beispiel  verwendet wird (z.B. ZPfad/output/filelist_Zll.txt) gibt es erklärende Kommentarzeilen (die, die mit # beginnen), die auch dieses Format erklären.
+
+In den selben Skripten/Macros kannst du auch Tabellen erzeugen. Diese sind nicht aufgeräumt (z.B. ist die Floating Point Präzision nicht so, wie es wissenschaftlich sein sollte, aber man kann Daten damit gut ablesen. Ich habe drei Arten von Tabellen: simple - die du in einen *einfachen* Texteditor gut anschauen kannst, csv - für csv-Tabellen, die von Tabellenkalkulationsprogrammen (wie Excel oder Numbers) eingelesen werden können (eventuell musst du die Tabelle als eine csv-Datei zuvor speichern), und latex, was eine Dokumentenerstellungssprache ist. 
+Im python Skript kannst du diese Tabellen mit den drei Flaggen `-p -pc -pl` erzeugen (jeweils einzeln oder zusammen). Die MakePlot-Funktion im C-Marco hat drei boolean als Input dafür.
+
