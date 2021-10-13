@@ -65,6 +65,10 @@ void OpenTuple::Init(TTree *tree) {
   if (lep_trackd0pvunbiased_branch) lep_trackd0pvunbiased_branch->SetAddress(&lep_trackd0pvunbiased_);
   lep_tracksigd0pvunbiased_branch = tree->GetBranch("lep_tracksigd0pvunbiased");
   if (lep_tracksigd0pvunbiased_branch) lep_tracksigd0pvunbiased_branch->SetAddress(&lep_tracksigd0pvunbiased_);
+  met_et_branch = tree->GetBranch("met_et");
+  if (met_et_branch) met_et_branch->SetAddress(&met_et_);
+  met_phi_branch = tree->GetBranch("met_phi");
+  if (met_phi_branch) met_phi_branch->SetAddress(&met_phi_);
   jet_n_branch = tree->GetBranch("jet_n");
   if (jet_n_branch) jet_n_branch->SetAddress(&jet_n_);
   jet_pt_branch = tree->GetBranch("jet_pt");
@@ -200,6 +204,8 @@ void OpenTuple::GetEntry(unsigned int idx) {
   lep_etcone20_isLoaded = false;
   lep_trackd0pvunbiased_isLoaded = false;
   lep_tracksigd0pvunbiased_isLoaded = false;
+  met_et_isLoaded = false;
+  met_phi_isLoaded = false;
   jet_n_isLoaded = false;
   jet_pt_isLoaded = false;
   jet_eta_isLoaded = false;
@@ -283,6 +289,8 @@ void OpenTuple::LoadAllBranches() {
   if (lep_etcone20_branch != 0) lep_etcone20();
   if (lep_trackd0pvunbiased_branch != 0) lep_trackd0pvunbiased();
   if (lep_tracksigd0pvunbiased_branch != 0) lep_tracksigd0pvunbiased();
+  if (met_et_branch != 0) met_et();
+  if (met_phi_branch != 0) met_phi();
   if (jet_n_branch != 0) jet_n();
   if (jet_pt_branch != 0) jet_pt();
   if (jet_eta_branch != 0) jet_eta();
@@ -722,6 +730,32 @@ const vector<float> &OpenTuple::lep_tracksigd0pvunbiased() {
     lep_tracksigd0pvunbiased_isLoaded = true;
   }
   return *lep_tracksigd0pvunbiased_;
+}
+
+const float &OpenTuple::met_et() {
+  if (not met_et_isLoaded) {
+    if (met_et_branch != 0) {
+      met_et_branch->GetEntry(index);
+    } else {
+      printf("branch met_et_branch does not exist!\n");
+      exit(1);
+    }
+    met_et_isLoaded = true;
+  }
+  return met_et_;
+}
+
+const float &OpenTuple::met_phi() {
+  if (not met_phi_isLoaded) {
+    if (met_phi_branch != 0) {
+      met_phi_branch->GetEntry(index);
+    } else {
+      printf("branch met_phi_branch does not exist!\n");
+      exit(1);
+    }
+    met_phi_isLoaded = true;
+  }
+  return met_phi_;
 }
 
 const unsigned int &OpenTuple::jet_n() {
@@ -1414,6 +1448,8 @@ const vector<float> &lep_ptcone30() { return opentuple.lep_ptcone30(); }
 const vector<float> &lep_etcone20() { return opentuple.lep_etcone20(); }
 const vector<float> &lep_trackd0pvunbiased() { return opentuple.lep_trackd0pvunbiased(); }
 const vector<float> &lep_tracksigd0pvunbiased() { return opentuple.lep_tracksigd0pvunbiased(); }
+const float &met_et() { return opentuple.met_et(); }
+const float &met_phi() { return opentuple.met_phi(); }
 const unsigned int &jet_n() { return opentuple.jet_n(); }
 const vector<float> &jet_pt() { return opentuple.jet_pt(); }
 const vector<float> &jet_eta() { return opentuple.jet_eta(); }

@@ -1,4 +1,5 @@
 import ROOT
+import math
 
 #In diesem Skript haben wir drei Funktionen bestimmt
 #Die erste ist AnalyzeOneDataset - die Hauptfunktion
@@ -18,9 +19,10 @@ def AnalyzeOneDataset(isdata, inputname, outputname):
     #Im Beispiel zeige ich drei Histogramme, eines davon werden wir haeufiger betrachten.
     #Das Format ist so, dass wir zuerst den Python-Variablen-Name initialisieren mit einem ROOT.TH1F (1D histogram mit floating-point precision).
     #Dieses ROOT.TH1F braucht 5 (4) Eingaben, zuerst der ROOT-Variablen-Name (wie ROOT das Histogramm speichert), einen beschreibenen Titel (Histogramm-Titel; x-Achsenbeschreibung; y-Achsenbeschreibung), die Anzahl von Abschnitten (nbins), sowie die Histogramm-Grenzen der x-Achse
-    hNLeps = ROOT.TH1F("hNLeps","Example plot: Number of leptons; Number of leptons ; Events ",5,-0.5,4.5)
-    hLepPt = ROOT.TH1F("hLepPt","Example plot: pT of leptons; p_{T} [GeV] ; Events times N_{leptons} ",25,0,250)
-    hMll   = ROOT.TH1F("hMll",  "Example plot: Dilepton invariant mass; m_{ll} [GeV] ; Events ",100,0,500)
+    hNLeps = ROOT.TH1F("hNLeps", "Example plot: Number of leptons; Number of leptons ; Events ",5,-0.5,4.5)
+    hLepPt = ROOT.TH1F("hLepPt", "Example plot: pT of leptons; p_{T} [GeV] ; Events times N_{leptons} ",25,0,250)
+    hETmiss= ROOT.TH1F("hETmiss","Example plot: Missing transverse momentum; p_{T}^{miss} [GeV] ; Events",50,0,500)
+    hMT    = ROOT.TH1F("hMT",  "  Example plot: Transverse mass; m_{T} [GeV] ; Events ",100,0,500)
 
     #Als naechstes wollen wir die Analyse durchfuehren. Dazu schauen wir also die Ereignisse (events) im ntuple an
     print("Analyze "+ str(tree.GetEntries())+" events")
@@ -47,6 +49,7 @@ def AnalyzeOneDataset(isdata, inputname, outputname):
         #Zuerst testen wir, ob wir ueberhaupt gute Leptonen haben
         leptontriggereddata = False
         nleps = 0
+        index = -1
         for ilep in range(event.lep_n):
             #ilep zeigt den Index innerhalb der lep_n branches da.
             if event.lep_pt[ilep] < 20.*1000.: #minimaler Impuls
@@ -65,77 +68,35 @@ def AnalyzeOneDataset(isdata, inputname, outputname):
             nleps += 1
             if event.lep_trigMatched[ilep]:
                 leptontriggereddata = True
+            if index<0:
+                index = ilep
+            hLepPt.Fill(event.lep_pt[ilep]/1000.,eventweight)
 
         if not leptontriggereddata:
             continue
             
-        #Jetzt fuellen wir unser erstes Histogram mit der nleps variable und dem Gewicht eventweight.
+        #Jetzt fuellen wir ein Histogram mit der nleps variable und dem Gewicht eventweight.
         hNLeps.Fill(nleps, eventweight)
+        hETmiss.Fill(event.met_et/1000., eventweight)
 
-        index1, index2 = -1, -1
-        #Um eine per Lepton-Analyse zu machen, muessen wir wieder eine for-Schleife schreiben
-        for ilep in range(event.lep_n):
-            #ilep zeigt den Index innerhalb der lep_n branches da.
-            if event.lep_pt[ilep] < 20.*1000.: #minimaler Impuls
-                continue
-            if abs(event.lep_eta[ilep]) > 2.5:#zentral im Detektor
-                continue
-            if not event.lep_isTightID[ilep]:#Klare Identifikation als Lepton
-                continue
-            if event.lep_ptcone30[ilep]/event.lep_pt[ilep]>0.15:#isoliert von anderen Objekten (Track basiert)
-                continue
-            if event.etcone20[ilep]/event.lep_pt[ilep]>0.15:#isoliert von anderen Objekten (Kalorimeter basiert)
-                continue
-            if event.lep_type[ilep]==11 and abs(event.lep_eta[ilep]) > 1.37 and abs(event.lep_eta[ilep]) > 1.52:#Besonderheit fuer Elektronen/Positronen
-                continue
-            #Hier speichern wir den transversalen Impuls der Leptonen ab.
-            hLepPt.Fill(event.lep_pt[ilep]/1000.,eventweight)
-            #Nun machen wir es etwas schwieriger, eine Variable, die sich aus 2 Leptonen besteht. Also brauchen wir eine Doppelschlaufe. Jetzt wirst du gleich merken, was es sich mit index1 und index2 auf sich hat.
-            #Warum ist hier ein ilep+1
-            for jlep in range(ilep+1,event.lep_n):
-                if index1 >=0:
-                    #Warum gibt es hier ein break Statement?
-                    break
-                if event.lep_pt[jlep] < 20.*1000.: #minimaler Impuls
-                    continue
-                if abs(event.lep_eta[jlep]) > 2.5:#zentral im Detektor
-                    continue
-                if not event.lep_isTightID[jlep]:#Klare Identifikation als Lepton
-                    continue
-                if event.lep_ptcone30[jlep]/event.lep_pt[jlep]>0.15:#isoliert von anderen Objekten (Track basiert)
-                    continue
-                if event.etcone20[jlep]/event.lep_pt[jlep]>0.15:#isoliert von anderen Objekten (Kalorimeter basiert)
-                    continue
-                if event.lep_type[jlep]==11 and abs(event.lep_eta[jlep]) > 1.37 and abs(event.lep_eta[jlep]) > 1.52:#Besonderheit fuer Elektronen/Positronen
-                    continue
-                #Wir wollen ein e+e- oder ein mu+mu- Paar auswaehlen.
-                #Zuerst testen wir den Lepton-Flavor. Uebrigens, fuer Elektronen/Positronen ist der Wert von lep_type 11, fuer Muonen ist er 13.
-                if event.lep_type[ilep] != event.lep_type[jlep]:
-                    continue
-                #Und als naechstes, ob die Ladungen verschieden sind
-                if event.lep_charge[ilep] == event.lep_charge[jlep]:
-                    continue
-                index1 = ilep
-                index2 = jlep
-                break
-
-        if index1 >=0:
-            #wir haben die Indizes fuer Mll.
+        if inde1 >=0:
+            #wir haben den Index fuer MT.
             #Da diese Variable nicht sehr einfach zu berechnen ist, Habe ich hier die Berechnung aufgeschrieben. Was ich hier mache ist ein LorenzVektor aus den zwei Leptonen bauen, und die Masse mit der LorentzVector internen Funktion bestimmen.
             #Die Formel dafuer findest du z.B. hier: https://en.wikipedia.org/wiki/Invariant_mass#Example:_two-particle_collision
             #Ein Lorentzvektor ist z.B. hier beschrieben: https://de.wikipedia.org/wiki/Vierervektor
-            lvlep1 = GetLorentzVector(event.lep_pt[index1],event.lep_eta[index1],event.lep_phi[index1],event.lep_E[index1])
-            lvlep2 = GetLorentzVector(event.lep_pt[index2],event.lep_eta[index2],event.lep_phi[index2],event.lep_E[index2])
-            Mll = (lvlep1+lvlep2).M()/1000.
-            hMll.Fill(Mll,eventweight)
-        
+            lvlep = GetLorentzVector(event.lep_pt[index],event.lep_eta[index],event.lep_phi[index],event.lep_E[index])
+            lvmet = GetLorentzVector(event.met_et,event.0.,event.met_phi,event.met_et)
+            MT = math.sqrt( math.pow(lvlep.M(),2)+math.pow(lvmet.M(),2) + 2*(lvlep.Et()*lvmet.Et() - lvlep.Px()*lvmet.Px() - lvlep.Py()*lvmet.Py() ) ) / 1000.
+            hMT.Fill(MT,eventweight)
+    
     print("Save results in "+outputname)
     #Nun sind wir aus der Ereignis(Event) Schleife, speichern wir unsere Resultate ab
     #Achtung, "recreate" sagt, dass die alte Datei geloescht und ueberschrieben werden soll.
     fout = ROOT.TFile(outputname,"recreate")
     hNLeps.Write()
     hLepPt.Write()
-    hMll.Write()
+    hETmiss.Write()
+    hMT.Write()
     fout.Close()
 
 #Eine Hilfsfunktion
@@ -146,16 +107,31 @@ def GetLorentzVector(pt, eta, phi, E):
     return lvtemp
 
 def AnalyzeAll():
-    basepath = "https://atlas-opendata.web.cern.ch/atlas-opendata/samples/2020/2lep/" #from internet
-    #basepath = "/lustre/fs22/group/atlas/haweber/SchuelerProjekte/ATLASOpenData/13TeV/2lep/" #local path
-    
-    AnalyzeOneDataset(True, basepath+"Data/data_A.2lep.root",            "output/data_A.root")
-    AnalyzeOneDataset(True, basepath+"Data/data_B.2lep.root",            "output/data_B.root")
-    AnalyzeOneDataset(True, basepath+"Data/data_C.2lep.root",            "output/data_C.root")
-    AnalyzeOneDataset(True, basepath+"Data/data_D.2lep.root",            "output/data_D.root")
-    AnalyzeOneDataset(False,basepath+"MC/mc_361106.Zee.2lep.root",       "output/mc_Zee.root")
-    AnalyzeOneDataset(False,basepath+"MC/mc_361107.Zmumu.2lep.root",     "output/mc_Zmumu.root")
-    AnalyzeOneDataset(False,basepath+"MC/mc_361108.Ztautau.2lep.root",   "output/mc_Ztautau.root")
-    AnalyzeOneDataset(False,basepath+"MC/mc_410000.ttbar_lep.2lep.root", "output/mc_tt2l.root")
-    AnalyzeOneDataset(False,basepath+"MC/mc_363492.llvv.2lep.root",      "output/mc_WW2l.root")
-    
+    basepath = "https://atlas-opendata.web.cern.ch/atlas-opendata/samples/2020/1lep/" #from internet
+    #basepath = "/lustre/fs22/group/atlas/haweber/SchuelerProjekte/ATLASOpenData/13TeV/1lep/" #local path
+
+    AnalyzeOneDataset(True, basepath+"Data/data_A.1lep.root",                       "output/data_A.root")
+    AnalyzeOneDataset(True, basepath+"Data/data_B.1lep.root",                       "output/data_B.root")
+    AnalyzeOneDataset(True, basepath+"Data/data_C.1lep.root",                       "output/data_C.root")
+    AnalyzeOneDataset(True, basepath+"Data/data_D.1lep.root",                       "output/data_D.root")
+    AnalyzeOneDataset(False,basepath+"MC/mc_361100.Wplusenu.1lep.root",             "output/mc_Wpenu.root")
+    AnalyzeOneDataset(False,basepath+"MC/mc_361101.Wplusmunu.1lep.root",            "output/mc_Wpmunu.root")
+    AnalyzeOneDataset(False,basepath+"MC/mc_361102.Wplustaunu.1lep.root",           "output/mc_Wptaunu.root")
+    AnalyzeOneDataset(False,basepath+"MC/mc_361103.Wminusenu.1lep.root",            "output/mc_Wmenu.root")
+    AnalyzeOneDataset(False,basepath+"MC/mc_361104.Wminusmunu.1lep.root",           "output/mc_Wmmunu.root")
+    AnalyzeOneDataset(False,(basepath+"MC/mc_361105.Wminustaunu.1lep.root",         "output/mc_Wmtaunu.root")
+    AnalyzeOneDataset(False,basepath+"MC/mc_410000.ttbar_lep.1lep.root",            "output/mc_tt1l.root")
+    AnalyzeOneDataset(False,basepath+"MC/mc_363492.llvv.1lep.root",                 "output/mc_WW2l.root")
+    AnalyzeOneDataset(False,basepath+"MC/mc_363359.WpqqWmlv.1lep.root",             "output/mc_WWm1l.root")
+    AnalyzeOneDataset(False,basepath+"MC/mc_363360.WplvWmqq.1lep.root",             "output/mc_WWp1l.root")
+    AnalyzeOneDataset(False,basepath+"MC/mc_363489.WlvZqq.1lep.root",               "output/mc_WZ1l.root")
+    AnalyzeOneDataset(False,basepath+"MC/mc_361106.Zee.1lep.root",                  "output/mc_Zee.root")
+    AnalyzeOneDataset(False,basepath+"MC/mc_361107.Zmumu.1lep.root",                "output/mc_Zmumu.root")
+    AnalyzeOneDataset(False,basepath+"MC/mc_361108.Ztautau.1lep.root",              "output/mc_Ztautau.root")
+    AnalyzeOneDataset(False,basepath+"MC/mc_410011.single_top_tchan.1lep.root",     "output/mc_t_t.root")
+    AnalyzeOneDataset(False,basepath+"MC/mc_410012.single_antitop_tchan.1lep.root", "output/mc_tbar_t.root")
+    AnalyzeOneDataset(False,basepath+"MC/mc_410025.single_top_schan.1lep.root",     "output/mc_t_s.root")
+    AnalyzeOneDataset(False,basepath+"MC/mc_410026.single_antitop_schan.1lep.root", "output/mc_tbar_s.root")
+    AnalyzeOneDataset(False,basepath+"MC/mc_410013.single_top_wtchan.1lep.root",    "output/mc_t_tW.root")
+    AnalyzeOneDataset(False,basepath+"MC/mc_410014.single_antitop_wtchan.1lep.root","output/mc_tbar_tW.root")
+

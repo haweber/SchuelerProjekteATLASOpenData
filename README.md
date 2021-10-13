@@ -85,7 +85,6 @@ Hier folgt eine Beschreibung der Projekte:
     
 Um den W-Pfad zu wählen, wirst du weiter zum Ordner WPfad gehen und dieses README weiterlesen.
 
-**TO DO:** Dieser Pfad wurde noch nicht erarbeitet.
     
 ### Z-Pfad
 1.) Zuerst wirst du versuchen, Z-Bosonen zu rekonstruieren.
@@ -98,7 +97,7 @@ Um den W-Pfad zu wählen, wirst du weiter zum Ordner WPfad gehen und dieses READ
     
 - Messe die Kinematik der Z-Bosonen. Diese sind z.B. pT, eta, phi. Gibt es Unterschiede zur Theorie/Simulation?
 
-Um den Z-Pfad zu wählen, wirst du weiter zum Ordner WPfad gehen und dieses README weiterlesen.
+Um den Z-Pfad zu wählen, wirst du weiter zum Ordner ZPfad gehen und dieses README weiterlesen.
 
     
 ### Higgs-Pfad
