@@ -19,6 +19,8 @@ Um diese Daten auszuwerten, brauchen wir ein Programm, dass es lesen kann. Wie i
 Das Python Skript ist ErsteSchritte.py: Dies ist sehr langsam. Du kannst es mit folgendem Befehl ausführen (falls ROOT vorhanden ist): `python ErsteSchritte.py`
 Besser ist: runAll.C / ScanEvents.C: Das Haupt-Macro mit dem Programm ist ScanEvents.C. Dieses wird über runAll.C aufgerufen (wenn ROOT vorhanden ist): `root -l -b -q runAll.C`
 
+n.b. - während beide Wege funktionieren sollten, wurde nur das C-Macro getestet.
+
 Die Ideen zu diesem Praktikum wurden bereits beschrieben:
 1.) Zuerst wirst du versuchen, Z-Bosonen zu rekonstruieren.
 

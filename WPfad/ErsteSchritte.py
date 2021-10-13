@@ -52,7 +52,7 @@ def AnalyzeOneDataset(isdata, inputname, outputname):
         index = -1
         for ilep in range(event.lep_n):
             #ilep zeigt den Index innerhalb der lep_n branches da.
-            if event.lep_pt[ilep] < 20.*1000.: #minimaler Impuls
+            if event.lep_pt[ilep] < 25.*1000.: #minimaler Impuls
                 continue
             if abs(event.lep_eta[ilep]) > 2.5:#zentral im Detektor
                 continue
@@ -135,3 +135,4 @@ def AnalyzeAll():
     AnalyzeOneDataset(False,basepath+"MC/mc_410013.single_top_wtchan.1lep.root",    "output/mc_t_tW.root")
     AnalyzeOneDataset(False,basepath+"MC/mc_410014.single_antitop_wtchan.1lep.root","output/mc_tbar_tW.root")
 
+AnalyzeAll()
