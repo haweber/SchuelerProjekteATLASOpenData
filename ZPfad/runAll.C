@@ -1,10 +1,11 @@
 {
 
   //Hier kompilieren das Hauptskript ScanEvents.C
+  gROOT->ProcessLine(".L EreignisAnalyse.C+");
   gROOT->ProcessLine(".L ScanEvents.C+");
 
-  string basepath = "https://atlas-opendata.web.cern.ch/atlas-opendata/samples/2020/2lep/"; //from internet
-  //string basepath = "/lustre/fs22/group/atlas/haweber/SchuelerProjekte/ATLASOpenData/13TeV/2lep/"; //local path
+  //string basepath = "https://atlas-opendata.web.cern.ch/atlas-opendata/samples/2020/2lep/"; //from internet
+  string basepath = "/lustre/fs22/group/atlas/haweber/SchuelerProjekte/ATLASOpenData/13TeV/2lep/"; //local path
 
   //Wir laden alle Daten-Dateien in eine TChain, und analysieren Sie mit ScanEvents
   TChain *chData = new TChain("mini"); 

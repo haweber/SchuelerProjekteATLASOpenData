@@ -36,7 +36,7 @@ map<string, int> MyColor{
 			      { "kPink"   , 900}
 };
 
-void MakeMultiplePlots();//gan am Ende
+//void MakeMultiplePlots();//gan am Ende
 bool MakePlot(string filelist, string outdir, string tag, string histname, float scale = 1, string histtitle="", string xtitle="", string ytitle="", bool yaxis_log = false, bool overflow = true, bool underflow = true, float xMin = -999, float xMax = -999., float yMin = -999., float yMax = -999., float rMin = 0.5, float rMax = 1.5, bool printsimple=false, bool printcsv=false, bool printlatex=false, int roundprecision=1);
 bool IsPathExist(const std::string &s);
 int ColorTranslator(string s);
@@ -431,7 +431,7 @@ void PrintTables(string h, map<string,TH1F*> histos, map<string,string> sampleid
 };
 
 
-
+/*
 void MakeMultiplePlots(){
   //bool MakePlot(string filelist, string outdir, string tag, string histname, float scale = 1, string histtitle="", string xtitle="", string ytitle="", bool yaxis_log = false, bool overflow = true, bool underflow = true, float xMin = -999, float xMax = -999., float yMin = -999., float yMax = -999., float rMin = 0.5, float rMax = 1.5, bool printsimple=false, bool printcsv=false, bool printlatex=false);
 
@@ -440,3 +440,5 @@ void MakeMultiplePlots(){
   MakePlot("ZPfad/output/filelist_Zll.txt","ZPfad/output/plots/","ZPfad","hLepPt",1., "", "lep-p_{T} [GeV]", "leptons / 10 GeV", true,  true, true, -999,-999,-999,-999,0.5,1.5,false,false,false);
 
 }
+
+*/

@@ -27,7 +27,7 @@ def AnalyzeOneDataset(isdata, inputname, outputname):
     eventcounter = 0
     for event in tree:
         if eventcounter%int(tree.GetEntries()/20)==0:
-            print("Processed "+str(eventcounter)+"/"+tree.GetEntries()+" events")
+            print("Processed "+str(eventcounter)+"/"+str(tree.GetEntries())+" events")
         eventcounter += 1
         #Jedes event hat die Eigenschaften, die ATLAS hier angibt: http://opendata.atlas.cern/release/2020/documentation/datasets/dataset13.html
         #Bespreche mit deinem Betreuer, was diese bedeuten.
@@ -36,7 +36,7 @@ def AnalyzeOneDataset(isdata, inputname, outputname):
         eventweight = 1
         if not isdata:
             #Dieses Gewicht ist dafuer zustaendig, dass sich die Simulation sich an die Daten anschmiegt (beziehungsweise dies sollte)
-            eventweight *= event.mcWeight*event.scaleFactor_PILEUP*event.scaleFactor_ELE*event.scaleFactor_MUON*event.scaleFactor_LepTRIGGER*event.XSection/event.SumWeights*event.10000.
+            eventweight *= event.mcWeight*event.scaleFactor_PILEUP*event.scaleFactor_ELE*event.scaleFactor_MUON*event.scaleFactor_LepTRIGGER*event.XSection/event.SumWeights*10000.
 
         #Nun schauen wir uns die Daten an. Da wir nur Ereignisse wollen, die von Leptonentrigger selektiert wurden, machen wir hier eine Selektion.
         #Theoretisch sollten wir uns Elektronen und Muonen separat anschauen, aber fuer dieses Beispiel schauen wir es uns kombiniert an
@@ -57,7 +57,7 @@ def AnalyzeOneDataset(isdata, inputname, outputname):
                 continue
             if event.lep_ptcone30[ilep]/event.lep_pt[ilep]>0.15:#isoliert von anderen Objekten (Track basiert)
                 continue
-            if event.etcone20[ilep]/event.lep_pt[ilep]>0.15:#isoliert von anderen Objekten (Kalorimeter basiert)
+            if event.lep_etcone20[ilep]/event.lep_pt[ilep]>0.15:#isoliert von anderen Objekten (Kalorimeter basiert)
                 continue
             if event.lep_type[ilep]==11 and abs(event.lep_eta[ilep]) > 1.37 and abs(event.lep_eta[ilep]) > 1.52:#Besonderheit fuer Elektronen/Positronen
                 continue
@@ -84,7 +84,7 @@ def AnalyzeOneDataset(isdata, inputname, outputname):
                 continue
             if event.lep_ptcone30[ilep]/event.lep_pt[ilep]>0.15:#isoliert von anderen Objekten (Track basiert)
                 continue
-            if event.etcone20[ilep]/event.lep_pt[ilep]>0.15:#isoliert von anderen Objekten (Kalorimeter basiert)
+            if event.lep_etcone20[ilep]/event.lep_pt[ilep]>0.15:#isoliert von anderen Objekten (Kalorimeter basiert)
                 continue
             if event.lep_type[ilep]==11 and abs(event.lep_eta[ilep]) > 1.37 and abs(event.lep_eta[ilep]) > 1.52:#Besonderheit fuer Elektronen/Positronen
                 continue
@@ -104,7 +104,7 @@ def AnalyzeOneDataset(isdata, inputname, outputname):
                     continue
                 if event.lep_ptcone30[jlep]/event.lep_pt[jlep]>0.15:#isoliert von anderen Objekten (Track basiert)
                     continue
-                if event.etcone20[jlep]/event.lep_pt[jlep]>0.15:#isoliert von anderen Objekten (Kalorimeter basiert)
+                if event.lep_etcone20[jlep]/event.lep_pt[jlep]>0.15:#isoliert von anderen Objekten (Kalorimeter basiert)
                     continue
                 if event.lep_type[jlep]==11 and abs(event.lep_eta[jlep]) > 1.37 and abs(event.lep_eta[jlep]) > 1.52:#Besonderheit fuer Elektronen/Positronen
                     continue
@@ -146,8 +146,8 @@ def GetLorentzVector(pt, eta, phi, E):
     return lvtemp
 
 def AnalyzeAll():
-    basepath = "https://atlas-opendata.web.cern.ch/atlas-opendata/samples/2020/2lep/" #from internet
-    #basepath = "/lustre/fs22/group/atlas/haweber/SchuelerProjekte/ATLASOpenData/13TeV/2lep/" #local path
+    #basepath = "https://atlas-opendata.web.cern.ch/atlas-opendata/samples/2020/2lep/" #from internet
+    basepath = "/lustre/fs22/group/atlas/haweber/SchuelerProjekte/ATLASOpenData/13TeV/2lep/" #local path
     
     AnalyzeOneDataset(True, basepath+"Data/data_A.2lep.root",            "output/data_A.root")
     AnalyzeOneDataset(True, basepath+"Data/data_B.2lep.root",            "output/data_B.root")
