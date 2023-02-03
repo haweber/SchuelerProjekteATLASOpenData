@@ -17,7 +17,9 @@ Die Dateien, die wir brauche:
 
 Um diese Daten auszuwerten, brauchen wir ein Programm, dass es lesen kann. Wie in der Einführung beschrieben, ist dieses Programm für uns ROOT. Da das für dich eventuell fremd ist, gibt es hier zwei Macros (eines für die direkte Verwendung von ROOT, welches auf C++ basiert; das andere verwendet Python).
 Das Python Skript ist ErsteSchritte.py: Dies ist sehr langsam. Du kannst es mit folgendem Befehl ausführen (falls ROOT vorhanden ist): `python ErsteSchritte.py`
-Besser ist: runAll.C / ScanEvents.C: Das Haupt-Macro mit dem Programm ist ScanEvents.C. Dieses wird über runAll.C aufgerufen (wenn ROOT vorhanden ist): `root -l -b -q runAll.C`
+Besser ist: runAll.C: Das Haupt-Macro mit dem Programm ist ScanEvents.C, wobei die wichtigen Funktionen in EreignisAnalyse.C gespeichert sind. Dieses wird über runAll.C aufgerufen (wenn ROOT vorhanden ist): `root -l -b -q runAll.C`
+
+Um neue Variablen zu studieren, muss man nur die Datei `EreignisAnalyse.C` bearbeiten.
 
 n.b. - während beide Wege funktionieren sollten, wurde nur das C-Macro getestet.
 
