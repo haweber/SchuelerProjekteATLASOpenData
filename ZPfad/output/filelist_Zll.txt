@@ -4,6 +4,6 @@
 #Beachte, dass du sicherlich den Ort aendern musst!!
 #Farben in ROOT sind hier zu finden: https://root.cern.ch/doc/master/classTColorWheel.html, z.B. kannst du ROOT.kGreen+1 als Farbe auswählen.
 #Wichtig: Du brauchst immer mindestens zwei Histogramme. Eines, dass sich Data nennt und eines mit einer Simulation
-Data,Data,kBlack,/lustre/fs22/group/atlas/haweber/SchuelerProjekte/SchuelerProjekteATLASOpenData/ZPfad/output/data.root
-Zll,Z#rightarrowll,kGreen+1,/lustre/fs22/group/atlas/haweber/SchuelerProjekte/SchuelerProjekteATLASOpenData/ZPfad/output/mc_Zll.root
-Bkg,ll bkg,kBlue,/lustre/fs22/group/atlas/haweber/SchuelerProjekte/SchuelerProjekteATLASOpenData/ZPfad/output/mc_llBackground.root
+Data,Data,kBlack,ZPfad/output/data.root
+Zll,Z#rightarrowll,kGreen+1,ZPfad/output/mc_Zll.root
+Bkg,ll bkg,kBlue,ZPfad/output/mc_llBackground.root

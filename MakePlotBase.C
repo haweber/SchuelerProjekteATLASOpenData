@@ -6,6 +6,7 @@
 #include <cmath>
 #include <string>
 #include <vector>
+#include <filesystem>
 #include "TLatex.h"
 #include "TLegend.h"
 #include "TPad.h"
@@ -16,7 +17,6 @@
 #include "TLine.h"
 
 using namespace std;
-
 
 map<string, int> MyColor{
   { "kWhite"  , 0},
@@ -69,7 +69,6 @@ int ColorTranslator(string s){
     }
   return MyColor[s];
 }
-
 bool MakePlot(string filelist, string outdir, string tag, string histname, float scale, string histtitle, string xtitle, string ytitle, bool yaxis_log, bool overflow, bool underflow, float xMin, float xMax, float yMin, float yMax, float rMin, float rMax, bool printsimple, bool printcsv, bool printlatex, int roundprecision){
 
   gStyle->SetOptStat(0);
@@ -82,7 +81,7 @@ bool MakePlot(string filelist, string outdir, string tag, string histname, float
 
   cout << "You are plotting histogram(s) " << histname << " for " << tag <<  " to output directory " << outdir << endl << "Files used are given in " << filelist << endl;
   string outname = outdir;
-  if(outname.back()!=string("/")) outname += "/";
+  //if(outname.back()!=string("/")) outname += "/";
   if (!IsPathExist(outdir)){
     string pathmaker = "mkdir -p " + outname;
     gSystem->Exec(pathmaker.c_str());

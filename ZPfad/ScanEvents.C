@@ -59,8 +59,10 @@ int ScanEvents(TChain* chain, string outname, bool isdata = false, bool fast = t
 
     // Get File Content
     //Hier holen wir die Information um das Format
-    TFile file(currentFile->GetTitle());
-    TTree *tree = (TTree*)file.Get("mini");
+    //TFile file(currentFile->GetTitle());
+    TFile *file = TFile::Open(currentFile->GetTitle());
+    //TTree *tree = (TTree*)file.Get("mini");
+    TTree *tree = (TTree*)file->Get("mini");
     if (fast) TTreeCache::SetLearnEntries(10);
     if (fast) tree->SetCacheSize(128*1024*1024);
     opentuple.Init(tree);
@@ -115,7 +117,8 @@ int ScanEvents(TChain* chain, string outname, bool isdata = false, bool fast = t
   
     // Clean Up
     delete tree;
-    file.Close();
+    //file.Close();
+    file->Close();
   }
   if (nEventsChain != nEventsTotal) {
     cout << Form( "ERROR: number of events from files (%d) is not equal to total number of events (%d)", nEventsChain, nEventsTotal ) << endl;
