@@ -2,25 +2,26 @@
 
 # option parser
 import argparse
-import sys
+import matplotlib.pyplot as plt
+#import mplhep as hep # <-- nice histogram plotting
+from scipy.optimize import curve_fit
 import os
-import glob
-import fnmatch
-import ROOT
-from inspect import currentframe, getframeinfo
-import csv
-import math
-from MakePlotHelper import ColorTranslator
+import numpy as np
 
-frameinfo = getframeinfo(currentframe())
-
+#import argparse
+#import sys
+#import os
+#import glob
+#import fnmatch
+#import ROOT
+#from inspect import currentframe, getframeinfo
+#import csv
+#import math
+#from MakePlotHelper import ColorTranslator
 
 
 #Hier ist die Hauptfunktion, um deine Histogramme in eine Grafik (Plot) ansehnlich darzustellen. In Prinzip solltest Du hier nichts schreiben muessen, da alle noetigen Optionen in der Commandline eingegeben werden koennen.
 #Zwingende Eingaben:
-#filelist: Wo sind deine Histogramme
-#tag: ZPfad, HPfad, WPfad #not used yet
-#outdir: In welchem Ordner soll der Plot abgespeichert werden?
 #histname: Welches Histogramm moechtest du speziell plotten. Du kannst mehrere plotten, trenne Argumente mit einem Komma (,) aber keinem Leerzeichen ( ). Aber Vorsicht, wenn du verschiedene Flags gesetzt hast wie xMin, etc.
 #Weitere Inputs gibt es weiter unten (auf englisch)
 def main(args):
@@ -31,362 +32,168 @@ def main(args):
     #print ("     -----------")
     #print ("")
 
-    ROOT.gStyle.SetOptStat(0);
 
-    print("You are plotting histogram(s) " + args.histname + " for " + args.tag + " to output directory " + args.outdir)
-    print("Files used are given in " + args.filelist)
+    print("You are plotting histogram(s) " + args.histname + " to output directory " + args.outdir)
+    print("Files used are given in " + args.indir)
 
-    if not os.path.isfile(args.filelist):
-        print("Given filelist (" + args.filelist + ") is not a file")
-        return False
-    if not os.access(args.filelist,os.R_OK):
-        print("Given filelist (" + args.filelist + ") is not readable")
-        return False
-
-    histonames = args.histname.split(',')
+    ### Ueberpruefe, ob das Eingangsverzeichnis / Dateien exisitieren
+    indir = os.path.join(args.indir,"")
+    if not os.path.exists(indir):
+        print("The input directory "+indir+" does not exist - exit")
+        return 0
+    dataname = indir+args.histname+"_Data.npz"
+    signalname = indir+args.histname+"_Signal.npz"
+    backgroundname = indir+args.histname+"_Background.npz"
+    if not os.path.isfile(dataname):
+        print("The input file "+dataname+" does not exist - exit")
+        return 0
+    if not os.path.isfile(signalname):
+        print("The input file "+signalname+" does not exist - exit")
+        return 0
+    if not os.path.isfile(backgroundname):
+        print("The input file "+backgroundname+" does not exist - exit")
+        return 0
     
-    htemp = ROOT.TH1F()
-    histos = dict()
-    legnames = dict()
-    colors = dict()
-    isdata = dict()
-    stacks = dict()
-    sampleids = dict()
+    ### Stelle sicher, dass das Verzeichnis, in welche wir die Daten speichern wollen, existiert. Falls nicht, wird es erzeugt.
+    outdir = os.path.join(args.outdir,"")
+    if not os.path.exists(outdir):
+        os.makedirs(outdir)
 
-    
-    leg = ROOT.TLegend(0.5,0.775,0.85,0.9025,"","brNDC")
-    leg.SetBorderSize(0)
-    leg.SetTextSize(0.033)
-    leg.SetLineColor(1)
-    leg.SetLineStyle(1)
-    leg.SetLineWidth(2)
-    leg.SetNColumns(2)
-    leg.SetFillColor(0)
-    leg.SetFillStyle(1001)
-    
-    with open(args.filelist,'r') as f:
-        csvFile = csv.reader(filter(lambda row: row[0]!='#',f))
-        for l in csvFile:
-            sampleid,legname,color,filename=l[0],l[1],l[2],l[3]
-            f = ROOT.TFile.Open(filename)
-            ROOT.TH1.AddDirectory(0)
-            for h in histonames:
-                if h not in stacks:
-                    stacks[h] = ROOT.THStack()
-                hname = h+"_"+sampleid
-                hnameMC = h+"_SimSum"
-                htemp = f.Get(h)
-                histos[hname] = htemp.Clone(hname)
-                if args.overflow:
-                    histos[hname].SetBinContent(histos[hname].GetNbinsX(),histos[hname].GetBinContent(histos[hname].GetNbinsX())+histos[hname].GetBinContent(histos[hname].GetNbinsX()+1))
-                    histos[hname].SetBinError(histos[hname].GetNbinsX(),math.sqrt(math.pow(histos[hname].GetBinError(histos[hname].GetNbinsX()),2)+math.pow(histos[hname].GetBinError(histos[hname].GetNbinsX()+1),2)))
-                if args.underflow:
-                    histos[hname].SetBinContent(1,histos[hname].GetBinContent(1)+histos[hname].GetBinContent(0))
-                    histos[hname].SetBinError(1,math.sqrt(math.pow(histos[hname].GetBinError(1),2)+math.pow(histos[hname].GetBinError(0),2)))
-                legnames[hname] = legname
-                colors[hname] = ColorTranslator(color)
-                isdata[hname] = ('Data' in hname)
-                histos[hname].SetTitle(args.histtitle)
-                histos[hname].GetXaxis().SetTitle(args.xtitle)
-                histos[hname].GetYaxis().SetTitleOffset(1.8)
-                histos[hname].GetYaxis().SetTitle(args.ytitle)
-                if isdata[hname]:
-                    histos[hname].SetLineWidth(2) 
-                    histos[hname].SetLineColor(1) #Data is black
-                    histos[hname].SetMarkerColor(1) #Data is black
-                    histos[hname].SetMarkerStyle(20)
-                    if h == histonames[0]:
-                        leg.AddEntry(histos[hname],legname,"ep")
-                else:
-                    if sampleid not in sampleids:
-                        sampleids[sampleid] = sampleid
-                    if args.scale!=1:
-                        histos[hname].Scale(args.scale)
-                    if hnameMC not in histos:
-                        histos[hnameMC] = histos[hname].Clone(hnameMC)
-                        histos[hnameMC].SetLineWidth(2) 
-                        histos[hnameMC].SetLineColor(1) 
-                        histos[hnameMC].SetMarkerColor(1)
-                        histos[hnameMC].SetFillColor(1)
-                        histos[hnameMC].SetFillStyle(3544)
-                    else:
-                        histos[hnameMC].Add(histos[hname])
-                    histos[hname].SetLineColor(colors[hname]) 
-                    histos[hname].SetFillColor(colors[hname]) 
-                    histos[hname].SetMarkerColor(colors[hname]) 
-                    if h == histonames[0]:
-                        leg.AddEntry(histos[hname],legname,"f")
-                    stacks[h].Add(histos[hname])
-                #print(hname,histos[hname].GetName(),legnames[hname],colors[hname],isdata[hname])
-    for h in histonames:
-        histos[h+"_Ratio"] = histos[h+"_Data"].Clone(h+"_Ratio")#This will fail if there is no data and simulation histograms
-        histos[h+"_Ratio"].Divide(histos[h+"_SimSum"])
+    ### Lade die Daten
+    _data = np.load(dataname)
+    _sig  = np.load(signalname)
+    _bkg  = np.load(backgroundname)
+    ### Passe sie wieder in die Histogram-Form
+    #hdata, bins = np.histogram(_data["binning"][:-1],bins=_data["binning"],weights=_data["histo"])
+    #hsig, temp  = np.histogram( _sig["binning"][:-1],bins= _sig["binning"],weights= _sig["histo"])
+    #hbkg, temp  = np.histogram( _bkg["binning"][:-1],bins= _bkg["binning"],weights= _bkg["histo"])
+    hdata = _data["histo"]
+    hsig  =  _sig["histo"]
+    hbkg  =  _bkg["histo"]
+    bins  = _data["binning"]
+    hdataunc = _data["uncertainty"]
+    hbkgunc  =  _bkg["uncertainty"]
+    hsigunc  =  _sig["uncertainty"]
 
-    tLumi = ROOT.TLatex(0.95,0.955,"10 fb^{-1} (13 TeV)")
-    tLumi.SetNDC()
-    tLumi.SetTextAlign(31)
-    tLumi.SetTextFont(42)
-    tLumi.SetTextSize(0.042)
-    tLumi.SetLineWidth(2)
-    tCMS = ROOT.TLatex(0.125,0.955,"ATLAS")
-    tCMS.SetNDC()
-    tCMS.SetTextAlign(11)
-    tCMS.SetTextFont(61)
-    tCMS.SetTextSize(0.0525)
-    tCMS.SetLineWidth(2)
-    tPrel = ROOT.TLatex(0.26,0.955,"Open Data")
-    tPrel.SetNDC()
-    tPrel.SetTextAlign(11)
-    tPrel.SetTextFont(52)
-    tPrel.SetTextSize(0.042)
-    tPrel.SetLineWidth(2)
+    ### Objekt, dass den Plot enthaelt
+    if args.ratio:
+        fig, (ax, ar) = plt.subplots(2, 1, height_ratios=[11, 2])
+    else:
+        fig, ax = plt.subplots()
+    #fig.set_size_inches((12, 8))
+    ### Gebe dem Histogram ein Titel
+    ax.set_title(args.histtitle)
+    ### Gebe der x- und y-Achsen Namen
+    if not args.ratio:
+        ax.set_xlabel(args.xtitle) # z.B. "m\${}_{ll}\$ [GeV/c\${}^2\$]"
+    ax.set_ylabel(args.ytitle)
+    ### Definiere das Objekt, welches du Plotten moechtest
+    ### Zuerst die Daten
+    bin_center = (bins[1:] + bins[:-1]) / 2 # Wollen Daten zentral anzeigen
+    ax.errorbar(x=bin_center, y=hdata, yerr=hdataunc, fmt="ko", label="Daten")
+    #ax.hist(hdata, label="Daten",  bins=bins)
+    #ax.hist(bins[:-1], weights=hdata, label="Daten",  bins=bins)
 
-    outdirname = args.outdir
-    if outdirname[-1] != '/':
-        outdirname = outdirname + '/'
-    if not os.path.exists(outdirname):
-        os.makedirs(outdirname)
-    
+    ### Nun Signal und Untegrund - die sind aufeinander aufgesetzt
+    stack_x = [bins[:-1],bins[:-1]]
+    stack_y = [hbkg, hsig]
+    stack_label = ["Background", "Signal"]
+    ax.hist(stack_x, weights=stack_y, label=stack_label, bins=bins, stacked=True)
+    ### Logarithmische oder individuelle Achsen-Einstellungen
+    bottom, top = ax.get_ylim()
+    ax.set_xlim(bins[0],bins[-1]) #remove left/right margin
+    left, right = ax.get_xlim()
+    if args.yaxis_log:
+        ax.set_yscale('log')
+        ax.set_ylim(max(bottom,0.02),10.*top)
+        if args.ratio:
+            ax.set_ylim(max(bottom,0.02),25.*top)
+    else:
+        ax.set_ylim(bottom,1.1*top)
+    if args.xaxis_log:
+        ax.set_xscale('log')
+    if args.xMin != -999 or args.xMax != -999:
+        if args.xMin != -999:
+            left = args.xMin
+        if args.xMax != -999:
+            right = args.xMax
+        ax.set_xlim(left,right)
+    if args.yMin != -999 or args.yMax != -999:
+        if args.yMin != -999:
+            bottom = args.yMin
+        if args.yMax != -999:
+            top = args.yMax
+        ax.set_ylim(bottom,top)
+    ### Darstellung der Legende, damit klar ist, was was zeigt
+    ax.legend()
+    ### Einige Extras, damit man weiss, was Daten bedeutet
+    ax.text(0.02, 0.95, "ATLAS", weight="bold", transform=ax.transAxes)
+    ax.text(0.125, 0.95, "Open Data", transform=ax.transAxes)
+    ax.text(0.02, 0.90, r"13 TeV, 10 fb" + r"$^{-1}$", transform=ax.transAxes)
+    ax.plot()
 
-    for h in histonames:
-        #do three ifs so that the tables are each separated...
-        if args.printtable or args.printcsv or args.printlatex:
-            PrintTable(h,histos,sampleids,args.printtable,args.printcsv,args.printlatex)
+    ### Hier plotten wir den ratio plot, falls wir einen wollen
+    if args.ratio:
+        ###Erstelle das Verhaeltnis von Daten zu Simulation
+        htot = hbkg+hsig # komplette Simulation von Untergrund plus Signal
+        htot[htot == 0] = 1e-6
+        htotunc = (hbkgunc**2 + hsigunc**2)**0.5
+        hratio = hdata / htot
+        hratiounc = ((hdataunc**2)/(htot**2)+((hdata**2)*(htotunc**2)/htot**4))**0.5
+        ### Dies ist dann das Ratio-Histogramm als Plot
+        ar.axline(xy1=(left,1.0), xy2=(right,1.0), color='tab:gray', lw=2,linestyle='--')#,colors='tab:gray',linestyles='dashed')
+        ar.errorbar(x=bin_center, y=hratio, yerr=hratiounc, fmt="ko", label="Ratio")
+        ###Auch hier muessen wir die Achsen einstellen
+        ar.set_ylim(args.rMin,args.rMax)
+        ar.set_xlim(bins[0],bins[-1]) #remove left/right margin
+        if args.xMin != -999 or args.xMax != -999:
+            left, right = 0, 0
+            if args.xMin != -999:
+                left = args.xMin
+            if args.xMax != -999:
+                right = args.xMax
+            ar.set_xlim(left,right)
+        ar.set_xlabel(args.xtitle) # z.B. "m\${}_{ll}\$ [GeV/c\${}^2\$]"
+        ar.set_ylabel("Data / Sim.")
+        ar.plot()
+    plt.plot()
+    if args.notSave and not args.ratio:
+        plt.savefig(outdir+args.histname+".png")
+        plt.savefig(outdir+args.histname+".pdf")
+    elif args.notSave:
+        plt.savefig(outdir+args.histname+"_ratio.png")
+        plt.savefig(outdir+args.histname+"_ratio.pdf")
+    if args.showPlot:
+        plt.show()
 
-        maximum = -1
-        if args.yMax>0:
-            maximum = args.yMax
-        else:
-            maximum = max(histos[h+"_SimSum"].GetMaximum(),histos[h+"_Data"].GetMaximum())*1.667
-            if args.yaxis_log:
-                maximum *= 40
-        minimum = 0
-        if args.yaxis_log:
-            minimum = 0.2
-        if args.yMin>0 and args.yMin<args.yMax:
-            minimum = args.yMin
-        #print  getframeinfo(currentframe()).lineno, h
-        stacks[h].SetMaximum(maximum)
-        histos[h+"_SimSum"].SetMaximum(maximum)
-        histos[h+"_Data"].SetMaximum(maximum)
-        stacks[h].SetMinimum(minimum)
-        histos[h+"_SimSum"].SetMinimum(minimum)
-        histos[h+"_Data"].SetMinimum(minimum)
-        if args.xMin> (-990.) and args.xMin>=histos[h+"_Data"].GetBinLowEdge(1) and args.xMax>args.xMin and args.xMax<=histos[h+"_Data"].GetBinLowEdge(histos[h+"_Data"].GetNbinsX()+1):
-            stacks[h].GetXaxis().SetRangeUser(args.xMin,args.xMax)
-            histos[h+"_SimSum"].GetXaxis().SetRangeUser(args.xMin,args.xMax)
-            histos[h+"_Data"].GetXaxis().SetRangeUser(args.xMin,args.xMax)
-            histos[h+"_Ratio"].GetXaxis().SetRangeUser(args.xMin,args.xMax)
-        histos[h+"_Ratio"].SetMaximum(args.rMax)
-        histos[h+"_Ratio"].SetMinimum(args.rMin)
-
-        c1 = ROOT.TCanvas("c1", "",334,192,600,600)
-        c1.SetFillColor(0)
-        c1.SetBorderMode(0)
-        c1.SetBorderSize(2)
-        c1.SetTickx(1)
-        c1.SetTicky(1)
-        c1.SetLeftMargin(0.18)
-        c1.SetRightMargin(0.05)
-        c1.SetTopMargin(0.07)
-        c1.SetBottomMargin(0.15)
-        c1.SetFrameFillStyle(0)
-        c1.SetFrameBorderMode(0)
-        c1.SetFrameFillStyle(0)
-        c1.SetFrameBorderMode(0)
-        plotpad = ROOT.TPad("plotpad", "Pad containing the overlay plot",0,0.165,1,1)
-        plotpad.Draw()
-        plotpad.cd()
-        plotpad.SetFillColor(0)
-        plotpad.SetBorderMode(0)
-        plotpad.SetBorderSize(2)
-        plotpad.SetTickx(1)
-        plotpad.SetTicky(1)
-        plotpad.SetLeftMargin(0.12)
-        plotpad.SetRightMargin(0.04)
-        plotpad.SetTopMargin(0.05)
-        #plotpad.SetBottomMargin(0.15)
-        plotpad.SetFrameFillStyle(0)
-        plotpad.SetFrameBorderMode(0)
-        plotpad.SetFrameFillStyle(0)
-        plotpad.SetFrameBorderMode(0)
-        if args.yaxis_log:
-            plotpad.SetLogy()
-        
-        plotpad.cd()
-
-        #stacks[h].GetXaxis().SetTitleSize(0)
-        histos[h+"_SimSum"].GetXaxis().SetTitleSize(0)
-        histos[h+"_Data"].GetXaxis().SetTitleSize(0)
-        stacks[h].Draw("hist")
-        stacks[h].SetHistogram(histos[h+"_SimSum"])
-        stacks[h].Draw("hist")
-        histos[h+"_SimSum"].Draw("sameE2")
-        histos[h+"_Data"].Draw("sameE0X0")
-        leg.Draw()
-        tLumi.Draw()
-        tCMS.Draw()
-        tPrel.Draw()
-
-        c1.cd()
-        ratiopad = ROOT.TPad("ratiopad", "Pad containing the ratio",0,0,1,0.21)
-        ratiopad.Draw()
-        ratiopad.cd()
-        ratiopad.SetFillColor(0)
-        ratiopad.SetBorderMode(0)
-        ratiopad.SetBorderSize(2)
-        ratiopad.SetTickx(1)
-        ratiopad.SetTicky(1)
-        ratiopad.SetLeftMargin(0.12)
-        ratiopad.SetRightMargin(0.04)
-        ratiopad.SetBottomMargin(0.3)
-        ratiopad.SetFrameFillStyle(0)
-        ratiopad.SetFrameBorderMode(0)
-        ratiopad.SetFrameFillStyle(0)
-        ratiopad.SetFrameBorderMode(0)
-    
-        histos[h+"_Ratio"].GetXaxis().SetTitleSize(0.16)
-        histos[h+"_Ratio"].GetXaxis().SetTitleOffset(0.76)
-        histos[h+"_Ratio"].GetXaxis().SetLabelSize(0.0)
-        histos[h+"_Ratio"].GetYaxis().SetNdivisions(504)
-        histos[h+"_Ratio"].GetYaxis().SetTitle("data / sim")
-        histos[h+"_Ratio"].GetYaxis().SetTitleSize(0.14)
-        histos[h+"_Ratio"].GetYaxis().SetTitleOffset(0.28)
-        histos[h+"_Ratio"].GetYaxis().SetLabelSize(0.14)
-        histos[h+"_Ratio"].Draw()
-        rline = ROOT.TLine(histos[h+"_Ratio"].GetXaxis().GetBinLowEdge(1),1.,histos[h+"_Ratio"].GetXaxis().GetBinLowEdge(histos[h+"_Ratio"].GetNbinsX()+1),1.)
-        rline.SetLineWidth(2)
-        rline.SetLineStyle(7)
-        rline.Draw()
-        outname = outdirname + h +'.pdf'
-        c1.cd()
-        c1.SaveAs(outname)
-        c1.cd()
-    
-    return True
-
-
-def PrintTable(h,histos,sampleids,printsimple,printcsv,printlatex,roundprecision=1):
-    lengthsimple = 25
-    tablesimple = []
-    tablecsv = []
-    tablelatex = []
-    tableline = ""
-    lengthtable = (lengthsimple+3)*(len(sampleids)+3)+(lengthsimple/2+3)+1
-    #First the Simple Table
-    tablesimple.append('-'*lengthtable)
-    tableline = '| '+'Binning'.ljust(lengthsimple)+' | '
-    for s in sampleids:
-        tableline += (sampleids[s].ljust(lengthsimple)+' | ')
-    tableline += ('Simulation Sum'.ljust(lengthsimple)+' | ')
-    tableline += ('Data'.ljust(lengthsimple/2)+' | ')
-    tableline += ('Ratio'.ljust(lengthsimple)+' |')
-    tablesimple.append(tableline)
-    tablesimple.append('-'*lengthtable)
-    for i in range(1,histos[h+"_Data"].GetNbinsX()+1):
-        tableline = '| '+(str(histos[h+"_Data"].GetBinLowEdge(i))+'-'+str(histos[h+"_Data"].GetBinLowEdge(i+1))).ljust(lengthsimple) + ' | '
-        for s in sampleids:
-            #tableline += ((str(round(histos[h+"_"+sampleids[s] ].GetBinContent(i),roundprecision)) + ' +/- ' + str(round(histos[h+"_"+sampleids[s] ].GetBinError(i),roundprecision))).ljust(lengthsimple) + ' | ')
-            tableline += ((str(round(histos[h+"_"+sampleids[s] ].GetBinContent(i),roundprecision+1)).ljust((lengthsimple-5)/2) + ' +/- ' + str(round(histos[h+"_"+sampleids[s] ].GetBinError(i),roundprecision+1)).ljust((lengthsimple-5)/2)) + ' | ')
-        #tableline += ((str(round(histos[h+"_SimSum" ].GetBinContent(i),roundprecision)) + ' +/- ' + str(round(histos[h+"_SimSum" ].GetBinError(i),roundprecision))).ljust(lengthsimple) + ' | ')
-        tableline += ((str(round(histos[h+"_SimSum" ].GetBinContent(i),roundprecision+1)).ljust((lengthsimple-5)/2) + ' +/- ' + str(round(histos[h+"_SimSum" ].GetBinError(i),roundprecision+1)).ljust((lengthsimple-5)/2)) + ' | ')
-        tableline += (str(int(histos[h+"_Data" ].GetBinContent(i))).ljust(lengthsimple/2) + ' | ')
-        #tableline += ((str(round(histos[h+"_Ratio" ].GetBinContent(i),roundprecision+1)) + ' +/- ' + str(round(histos[h+"_Ratio" ].GetBinError(i),roundprecision+1))).ljust(lengthsimple) + ' | ')
-        tableline += ((str(round(histos[h+"_Ratio" ].GetBinContent(i),roundprecision+1)).ljust((lengthsimple-5)/2) + ' +/- ' + str(round(histos[h+"_Ratio" ].GetBinError(i),roundprecision+1)).ljust((lengthsimple-5)/2)) + ' | ')
-        tablesimple.append(tableline)
-    tablesimple.append('-'*lengthtable)
-
-    #Now the CSV table
-    tablecsv.append('-'*lengthtable)
-    tableline = 'Binning low,Binning high,'
-    for s in sampleids:
-        tableline += sampleids[s] +',' +sampleids[s]+ ' Uncertainty,'
-    tableline += 'Simulation Sum,Simulation Sum Uncertainty,Data,Ratio,Ratio Uncertainty'
-    tablecsv.append(tableline)
-    for i in range(1,histos[h+"_Data"].GetNbinsX()+1):
-        tableline = str(histos[h+"_Data"].GetBinLowEdge(i))+','+str(histos[h+"_Data"].GetBinLowEdge(i+1)) +','
-        for s in sampleids:
-            tableline += str(round(histos[h+"_"+sampleids[s] ].GetBinContent(i),roundprecision+1))+','+str(round(histos[h+"_"+sampleids[s] ].GetBinError(i),roundprecision+1))+','
-        tableline += str(round(histos[h+"_SimSum" ].GetBinContent(i),roundprecision+1))+','+str(round(histos[h+"_SimSum" ].GetBinError(i),roundprecision+1))+','
-        tableline += str(int(histos[h+"_Data" ].GetBinContent(i)))+','
-        tableline += str(round(histos[h+"_Ratio" ].GetBinContent(i),roundprecision+2))+','+str(round(histos[h+"_Ratio" ].GetBinError(i),roundprecision+2))
-        tablecsv.append(tableline)
-    tablecsv.append('-'*lengthtable)
-
-    #Finally Latex table
-    tablelatex.append('\\begin{table}[htb]')
-    tablelatex.append('\\caption{\\label{tab:somelabel}Here goes the caption.}')
-    tablelatex.append('\\centering')
-    tablelatex.append('\\begin{tabular}{|l|'+'c'*(len(sampleids)+1)+'|c|c|}')
-    tablelatex.append('\\hline')
-    tableline = '  Binning'.ljust(lengthsimple)+' & '
-    for s in sampleids:
-        tableline += (sampleids[s].ljust(lengthsimple)+' & ')
-    tableline += ('Simulation Sum'.ljust(lengthsimple)+' & ')
-    tableline += ('Data'.ljust(lengthsimple/2)+' & ')
-    tableline += ('Ratio'.ljust(lengthsimple)+'  \\\\')
-    tablelatex.append(tableline)
-    tablelatex.append('\\hline')
-    for i in range(1,histos[h+"_Data"].GetNbinsX()+1):
-        tableline = ' '+(str(histos[h+"_Data"].GetBinLowEdge(i))+'--'+str(histos[h+"_Data"].GetBinLowEdge(i+1))).ljust(lengthsimple) + ' & '
-        for s in sampleids:
-            tableline += '$'+(str(round(histos[h+"_"+sampleids[s] ].GetBinContent(i),roundprecision+1)).ljust((lengthsimple-5)/2) + ' \\pm ' + str(round(histos[h+"_"+sampleids[s] ].GetBinError(i),roundprecision+1)).ljust((lengthsimple-5)/2) + '$ & ')
-        tableline += '$'+(str(round(histos[h+"_SimSum" ].GetBinContent(i),roundprecision+1)).ljust((lengthsimple-5)/2) + ' \\pm ' + str(round(histos[h+"_SimSum" ].GetBinError(i),roundprecision+1)).ljust((lengthsimple-5)/2) + '$ & ')
-        tableline += '$'+(str(int(histos[h+"_Data" ].GetBinContent(i))).ljust(lengthsimple/2) + '$ & ')
-        tableline += '$'+(str(round(histos[h+"_Ratio" ].GetBinContent(i),roundprecision+1)).ljust((lengthsimple-5)/2) + ' \\pm ' + str(round(histos[h+"_Ratio" ].GetBinError(i),roundprecision+1)).ljust((lengthsimple-5)/2) + '$ \\\\')
-        tablelatex.append(tableline)
-
-    tablelatex.append('\\hline')
-    tablelatex.append('\\end{tabular}')
-    tablelatex.append('\\end{table}')
-        
-    if printsimple:
-        print("Simple table for "+h)
-        for line in tablesimple:
-            print(line)
-        print("")
-    if printcsv:
-        print("CSV table for "+h)
-        for line in tablecsv:
-            print(line)
-        print("")
-    if printlatex:
-        print("Latex table for "+h)
-        for line in tablelatex:
-            print(line)
-        print("")
-    #1234 +/- 123
-    #1.23E+07 +/- 1.23E+03
-    #12345678901234567890123
 
 
 if __name__ == "__main__":
 
     # Define options
     parser = argparse.ArgumentParser(description="Plotter for VVV analysis")
-    parser.add_argument('-f' , '--filelist'    , dest='filelist'  , help='List of Files, through text file'            , type=str  , required=True)
-    parser.add_argument('-o' , '--outdir'      , dest='outdir'    , help='output directory where file is stored'       , type=str  , required=True)
-    parser.add_argument('-t' , '--tag'         , dest='tag'       , help='tag of analysis, either ZPfad, WPfad, HPfad' , type=str  , required=True)
-    parser.add_argument('-s' , '--scale'       , dest='scale'     , help='scale simulation'                            , type=float, required=False, default=1.)
-    parser.add_argument('-hn', '--histname'    , dest='histname'  , help='name of the histogram'                       , type=str  , required=True)
+    parser.add_argument('-i' , '--indir'       , dest='indir'     , help='input directory where histograms are stored' , type=str  , required=False, default="HistogramData")
+    parser.add_argument('-o' , '--outdir'      , dest='outdir'    , help='output directory where plot will be stored'  , type=str  , required=False, default="Plots")
+    parser.add_argument('-hn', '--histname'    , dest='histname'  , help='Histogram to be plotted'                                 , type=str  , required=True)
     parser.add_argument('-ht', '--histtitle'   , dest='histtitle' , help='Title of histogram'                          , type=str  , required=False, default="")
     parser.add_argument('-xt', '--xtitle'      , dest='xtitle'    , help='Title of x axis'                             , type=str  , required=False, default="")
     parser.add_argument('-yt', '--ytitle'      , dest='ytitle'    , help='Title of y axis'                             , type=str  , required=False, default="")
-    parser.add_argument('-l' , '--yaxis_log'   , dest='yaxis_log' , help='Y-axis set to log'                           ,                             default=False, action='store_true') 
-    parser.add_argument('-of', '--overflow'    , dest='overflow'  , help='Add overflow'                                ,                             default=False, action='store_true') 
-    parser.add_argument('-uf', '--underflow'   , dest='underflow' , help='Add underflow'                               ,                             default=False, action='store_true') 
-    parser.add_argument('-xn', '--xMin'        ,  dest='xMin'      , help='X-axis range setting'                        , type=float, required=False, default=-999.) 
-    parser.add_argument('-xx', '--xMax'        , dest='xMax'      , help='X-axis range setting'                        , type=float, required=False, default=-999.)
-    parser.add_argument('-yn', '--yMin'        , dest='yMin'      , help='Y-axis range setting'                        , type=float, required=False, default=-999.) 
-    parser.add_argument('-yx', '--yMax'        , dest='yMax'      , help='Y-axis range setting'                        , type=float, required=False, default=-999.)  
+    parser.add_argument('-ly', '--yaxis_log'   , dest='yaxis_log' , help='Y-axis set to log'                           ,                             default=False, action='store_true') 
+    parser.add_argument('-lx', '--xaxis_log'   , dest='xaxis_log' , help='X-axis set to log'                           ,                             default=False, action='store_true') 
+    parser.add_argument('-xn', '--xMin'        , dest='xMin'      , help='X-axis range setting'                        , type=float, required=False, default=-999) 
+    parser.add_argument('-xx', '--xMax'        , dest='xMax'      , help='X-axis range setting'                        , type=float, required=False, default=-999)
+    parser.add_argument('-yn', '--yMin'        , dest='yMin'      , help='Y-axis range setting'                        , type=float, required=False, default=-999) 
+    parser.add_argument('-yx', '--yMax'        , dest='yMax'      , help='Y-axis range setting'                        , type=float, required=False, default=-999)  
+    parser.add_argument('-sp', '--showPlot'    , dest='showPlot'  ,  help='Show directly the plot'                      ,                             default=False, action='store_true') 
+    parser.add_argument('-ns', '--notSave'     , dest='notSave'   ,  help='Do not save the plot'                        ,                             default=True,  action='store_false') 
+    parser.add_argument('-r' , '--ratio'       , dest='ratio'     ,  help='make a ratio plot'                           ,                             default=False, action='store_true')
     parser.add_argument('-rn', '--rMin'        , dest='rMin'      , help='ratio range setting'                         , type=float, required=False, default=0.5) 
     parser.add_argument('-rx', '--rMax'        , dest='rMax'      , help='ratio range setting'                         , type=float, required=False, default=1.5)  
-    parser.add_argument('-p' , '--printtable'  , dest='printtable', help='Make a very simple table'                    ,                             default=False, action='store_true') 
-    parser.add_argument('-pc' , '--printcsv'   , dest='printcsv'  , help='Make a csv table'                            ,                             default=False, action='store_true') 
-    parser.add_argument('-pl' , '--printlatex' , dest='printlatex', help='Make a latex table'                          ,                             default=False, action='store_true') 
+
+
     # Argument parser
     args = parser.parse_args()
-    args.tag
 
     # Main
     main(args)
+

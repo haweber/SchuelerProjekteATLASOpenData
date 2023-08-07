@@ -1,3 +1,12 @@
+#Reposistory specific
+HistogramData/
+*.npz
+Plots/
+*.png
+*pdf
+.DS_Store
+
+
 #Root specific files
 *.root
 *.d
