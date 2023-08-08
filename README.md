@@ -112,6 +112,7 @@ Deine Aufgabe ist es, den Code zu erweitern und neue Information aus den Daten z
 Mögliche Fragestellungen:
 - Wie oft findet man Elektronen oder Muonen im Zerfall.
 - Bei W-Bosonen: Was ist die Ladung dieser Bosonen?
+- Bei H-Bosonen: Gibt es Unterschiede zwischen den beiden Lepton-Paaren?
 - Was sind die kinematische Eigenschaften, Impuls, Energie, Flugrichtung?
 - Kannst du die Masse aus einem Fit exakt extrahieren.
 - Verstehst du, wie man Untergrund-Ereignisse und Signalereignisse unterscheiden kann?

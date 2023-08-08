@@ -1,7 +1,7 @@
 { // a simple wrapper for ScanEvents with data samples already defined.
   gROOT->ProcessLine(".L ScanEvents.C+");
 
-  int nleps=1;//this needs to be 1, 2 or 4
+  int nleps=4;//this needs to be 1, 2 or 4
   
   string basepath = "https://atlas-opendata.web.cern.ch/atlas-opendata/samples/2020/"; //from internet
   string lepstring = "";
@@ -60,10 +60,11 @@
     chBkg->Add((basepath+"MC/mc_345337.ZH125J_llWW2lep."+lepstring+".root").c_str());
     chBkg->Add((basepath+"MC/mc_363490.llll."+lepstring+".root").c_str());
     chBkg->Add((basepath+"MC/mc_363491.lllv."+lepstring+".root").c_str());
-    //chBkg->Add((basepath+"MC/mc_410000.ttbar_lep."+lepstring+".root").c_str());
-    chBkg->Add((basepath+"MC/mc_410155.ttW."+lepstring+".root").c_str());
-    chBkg->Add((basepath+"MC/mc_410218.ttee."+lepstring+".root").c_str());
-    chBkg->Add((basepath+"MC/mc_410219.ttmumu."+lepstring+".root").c_str());
+    chBkg->Add((basepath+"MC/mc_410000.ttbar_lep."+lepstring+".root").c_str());
+    //ttX samples are bugged - their cross section is wrong
+    //chBkg->Add((basepath+"MC/mc_410155.ttW."+lepstring+".root").c_str());
+    //chBkg->Add((basepath+"MC/mc_410218.ttee."+lepstring+".root").c_str());
+    //chBkg->Add((basepath+"MC/mc_410219.ttmumu."+lepstring+".root").c_str());
     ScanEvents(chBkg, "OutputTrees/simulation_background_"+lepstring+".root", false,true,-1,"",nleps);
   }
   
