@@ -59,8 +59,7 @@ Um Module in python zu laden, brauchst du pip. Dies erhälst du über folgenden 
 - alternativ: Siehe hier: https://pip.pypa.io/en/stable/installation/
 
 Sobald du pip hast, kannst du Module laden:\
-```python -m pip install os```\
-```python -m pip install argsparse```\
+```python -m pip install argparse```\
 ```python -m pip install numpy```\
 ```python -m pip install matplotlib```\
 ```python -m pip install uproot```\
