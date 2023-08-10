@@ -90,8 +90,9 @@ Wir haben drei Grundprojekte, welche W-, Z- oder Higgs-Bosonen analysieren. Je n
 Du kannst diesen zu deinem Laptop herunterladen, indem du entweder den Code als ZIP-Datei herunterlädst. Oder besser noch es von git herunterlädst, z.B. durch ein Terminal-Command: `git clone https://github.com/haweber/SchuelerProjekteATLASOpenData.git`
 Natürlich muss dein Laptop git verstehen.
 
-Die Projekte unterscheiden sich je nach WPfad, ZPfad, HPfad-Ordner.
-In allen Projekten gibt es ein Basis-Code, welche eine der grundlegenden Variablen ausgibt.
+Die Projekte unterscheiden sich als WPfad, ZPfad, HPfad.
+In allen Projekten gibt es ein Basis-Code, welche eine der grundlegenden Variablen ausgibt: AnalyzeData_XXXPath.py.
+Es gibt aber auch eine Datei, die Pfad-unabhängig ist. Wenn du zum Beispiel beim Z-Pfad selbst versuchen möchtest, dass Z-Boson zu bestimmen und dessen Masse zu extrahieren, musst du diese Datei nehmen. Sie hat immer noch ein Beispiel zur Datenanalyse. Verwende dazu `AnalyzeData_Example.py`
 
 Für den ZPfad ist es `AnalyzeData_ZPath.py`. Du kannst das Programm wie folgt durchführen:
 ```python AnalyzeData_ZPath.py```
