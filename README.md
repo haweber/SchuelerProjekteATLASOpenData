@@ -161,7 +161,7 @@ Deine Aufgabe ist es also:
 - Mithilfe der Richtung im Detektor erhälst du automatisch die x- und y-Komponente der Impulse der Teilchen.
 - Unter Berücksichtigung der z-Koordinaten der Hits kannst du auch die z-Komponente der Impulse bestimmen.
 - Mit den Werten der Impulse, kannst du die Energie der Teilchen abschätzen (vergleiche Impuls mit der Masse von Elektronen oder Muonen).
-    * Bemerke hier, dass man die Energie der Teilchen über diese Formel bestimmen kann: $(E)^2 = (mc^2)^2 + (p_x^2+p_y^2+p_z^2)^2$
+    * Bemerke hier, dass man die Energie der Teilchen über diese Formel bestimmen kann: $(E)^2 = (mc^2)^2 + (p_x^2+p_y^2+p_z^2)c^2$.
 - Wenn du die Energien hast, dann solltest du die Z-Massen-Messung für dieses eine Ereignis bestimmen können.
     * Die Z-Energie ist die Summe der Energien der beiden Zerfallsteilchen (Elektronen oder Muonen). Das gleiche gilt für jede Impulskomponente, die Summe der Impulskomponenten ist die Z-Impulskomponente. Mit der oberen Formel kann man somit die Z-Masse bestimmen.
 
