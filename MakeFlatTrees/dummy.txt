@@ -1,0 +1,12 @@
+track1,truthhits,x,0.,-10
+track1,truthhits,y,0.,50
+track1,truthhits,z,0.,50
+track2,truthhits,x,0.,11
+track2,truthhits,y,0.,-50
+track2,truthhits,z,0.,40
+track1,recohits,x,0.,-10
+track1,recohits,y,0.,50
+track1,recohits,z,0.,48
+track2,recohits,x,0.,11
+track2,recohits,y,0.,-50
+track2,recohits,z,0.,40

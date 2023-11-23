@@ -47,33 +47,33 @@ P	phi	theta	charge
 
 
 A
-python3 ATLAS_Detector_creator.py -ef ZeventA.txt -th -ex -iH 72.16,1.774,0.818,1.,48.47,-1.348,0.905,-1.
+python3 DataPreparator_ATLAS_Detector.py -ef dummy.txt -th -ex -iH 72.16,1.774,0.818,1.,48.47,-1.348,0.905,-1.
 B
-python3 ATLAS_Detector_creator.py -ef ZeventB.txt -th -ex -iH 109.10,-2.665,0.624,1.,119.23,-0.034,0.239,-1.
+python3 DataPreparator_ATLAS_Detector.py -ef dummy.txt -th -ex -iH 109.10,-2.665,0.624,1.,119.23,-0.034,0.239,-1.
 C
-python3 ATLAS_Detector_creator.py -ef ZeventC.txt -th -ex -iH 70.71,2.971,1.906,1.,37.73,-0.844,2.209,-1.
+python3 DataPreparator_ATLAS_Detector.py -ef dummy.txt -th -ex -iH 70.71,2.971,1.906,1.,37.73,-0.844,2.209,-1.
 D
-python3 ATLAS_Detector_creator.py -ef ZeventD.txt -th -ex -iH 226.85,0.320,2.967,-1.,213.34,-2.633,2.907,1.
+python3 DataPreparator_ATLAS_Detector.py -ef dummy.txt -th -ex -iH 226.85,0.320,2.967,-1.,213.34,-2.633,2.907,1.
 E
-python3 ATLAS_Detector_creator.py -ef ZeventE.txt -th -ex -iH 71.19,-2.370,0.629,-1.,68.36,0.775,0.919,1.
+python3 DataPreparator_ATLAS_Detector.py -ef dummy.txt -th -ex -iH 71.19,-2.370,0.629,-1.,68.36,0.775,0.919,1.
 F
-python3 ATLAS_Detector_creator.py -ef ZeventF.txt -th -ex -iH 260.58,0.318,2.952,-1.,203.84,-1.989,2.905,1.
+python3 DataPreparator_ATLAS_Detector.py -ef dummy.txt -th -ex -iH 260.58,0.318,2.952,-1.,203.84,-1.989,2.905,1.
 G
-python3 ATLAS_Detector_creator.py -ef ZeventG.txt -th -ex -iH 63.06,-1.659,2.224,1.,54.86,0.674,2.103,-1.
+python3 DataPreparator_ATLAS_Detector.py -ef dummy.txt -th -ex -iH 63.06,-1.659,2.224,1.,54.86,0.674,2.103,-1.
 H
-python3 ATLAS_Detector_creator.py -ef ZeventH.txt -th -ex -iH 30.18,2.319,2.320,1.,67.12,-0.379,1.234,-1.
+python3 DataPreparator_ATLAS_Detector.py -ef dummy.txt -th -ex -iH 30.18,2.319,2.320,1.,67.12,-0.379,1.234,-1.
 I
-python3 ATLAS_Detector_creator.py -ef ZeventI.txt -th -ex -iH 89.59,1.905,0.539,1.,44.56,-1.629,1.137,-1.
+python3 DataPreparator_ATLAS_Detector.py -ef dummy.txt -th -ex -iH 89.59,1.905,0.539,1.,44.56,-1.629,1.137,-1.
 J
-python3 ATLAS_Detector_creator.py -ef ZeventJ.txt -th -ex -iH 158.09,1.656,0.214,1.,49.45,-1.464,0.862,-1.
+python3 DataPreparator_ATLAS_Detector.py -ef dummy.txt -th -ex -iH 158.09,1.656,0.214,1.,49.45,-1.464,0.862,-1.
 K
-python3 ATLAS_Detector_creator.py -ef ZeventK.txt -th -ex -iH 147.89,-2.758,2.978,1.,26.64,0.338,1.751,-1.
+python3 DataPreparator_ATLAS_Detector.py -ef dummy.txt -th -ex -iH 147.89,-2.758,2.978,1.,26.64,0.338,1.751,-1.
 L
-python3 ATLAS_Detector_creator.py -ef ZeventL.txt -th -ex -iH 42.69,-1.186,1.270,1.,67.99,1.987,0.738,-1.
+python3 DataPreparator_ATLAS_Detector.py -ef dummy.txt -th -ex -iH 42.69,-1.186,1.270,1.,67.99,1.987,0.738,-1.
 M
-python3 ATLAS_Detector_creator.py -ef ZeventM.txt -th -ex -iH 74.34,-0.867,2.838,-1.,30.55,2.269,0.751,1.
+python3 DataPreparator_ATLAS_Detector.py -ef dummy.txt -th -ex -iH 74.34,-0.867,2.838,-1.,30.55,2.269,0.751,1.
 N
-python3 ATLAS_Detector_creator.py -ef ZeventN.txt -th -ex -iH 95.62,-0.393,1.738,-1.,26.23,-2.739,1.352,1.
+python3 DataPreparator_ATLAS_Detector.py -ef dummy.txt -th -ex -iH 95.62,-0.393,1.738,-1.,26.23,-2.739,1.352,1.
 O
-python3 ATLAS_Detector_creator.py -ef ZeventO.txt -th -ex -iH 48.18,-0.952,2.188,-1.,79.24,1.989,2.400,1.
+python3 DataPreparator_ATLAS_Detector.py -ef dummy.txt -th -ex -iH 48.18,-0.952,2.188,-1.,79.24,1.989,2.400,1.
 
