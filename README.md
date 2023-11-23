@@ -148,3 +148,32 @@ wobei `$1` entweder `H`, `W` oder `Z` sein muss, je nachdem welche Analyse du ma
 
 Viel Spaß!
 
+
+## Rekonstruktion eines Ereignisses
+
+Dieser Teil verlangt viel Eigeninitiative. Wir geben dir Hits (das heißt Treffer) im Detektor für ein einziges Ereignis, also die reine Detektormessungen. Deine Aufgabe ist es, die Impulse und Energie der dazugehörigen Spuren zu messen und damit die Z-Masse dieses einzelnen Ereignisses zu messen. Aus der Positionen der Hits und dem Wissen des Magnetfeldes im Detektor kann man den Impuls herleiten, etwas was in den vorhergehenden Teilen dieses Praktikum immer gegeben war. Um die Aufgabe einfach zu halten, geben wir dir nur die Messungen im inneren Spurendetektors. Dort herrscht ein konstantes Magnetfeld, welches in z-Richtung zeigt (also entlang der Protonenstrahlrichtung).
+Wie der transversale Impuls, und damit der gesamte Impuls eines geladenen Teilchens mit der Messung im Detektor und dem Magnetfeld zusammenhängt, findest du zum Beispiel auf Seite 10 und 11 von https://indico.cern.ch/event/281572/contributions/1629104/attachments/517028/713352/Detektoren.pdf.
+Falls du in der Schule noch nichts über Kräfte im Magnetfeld gehört hast, spreche mit deinem Betreuer.
+Deine Aufgabe ist es also:
+
+- Finde mithilfe der x- und y-Koordinaten der Hits eine Abschätzung der Sagitta s (auch Segmenthöhe genannt) und der Länge der Kreissehne L.
+- Bestimme daraus den Radius der Teilchenspur und damit den Betrag des transversalen Impuls der Teilchen. 
+- Mithilfe der Richtung im Detektor erhälst du automatisch die x- und y-Komponente der Impulse der Teilchen.
+- Unter Berücksichtigung der z-Koordinaten der Hits kannst du auch die z-Komponente der Impulse bestimmen.
+- Mit den Werten der Impulse, kannst du die Energie der Teilchen abschätzen (vergleiche Impuls mit der Masse von Elektronen oder Muonen).
+    * Bemerke hier, dass man die Energie der Teilchen über diese Formel bestimmen kann: $(E)^2 = (mc^2)^2 + (p_x^2+p_y^2+p_z^2)^2$
+- Wenn du die Energien hast, dann solltest du die Z-Massen-Messung für dieses eine Ereignis bestimmen können.
+    * Die Z-Energie ist die Summe der Energien der beiden Zerfallsteilchen (Elektronen oder Muonen). Das gleiche gilt für jede Impulskomponente, die Summe der Impulskomponenten ist die Z-Impulskomponente. Mit der oberen Formel kann man somit die Z-Masse bestimmen.
+
+Eine Liste der Hits kannst du wie folgt erhalten: 
+Im gleichen Verzeichnis wie die AnalyzeData-Dateien existiert eine ATLAS_Detektor.py Datei. Du kannst etwas wie folgt im Terminal eingeben:\
+``python ATLAS_Detektor.py -ef SingleEventHitData/ZeventXXX.txt -rh -ex -ph``\
+wobei das `XXX` in `ZeventXXX.txt` ein Buchstabe zwischen `A` bis `O` ist. Es könnte sein, dass du `python3` schreiben musst.
+
+Wenn due dieses Programm laufen lässt, passieren zwei Dinge. Erstens, werden die im Terminal die Hits von zwei Teilchenspuren angezeigt (alle Angaben sind in cm!). Zweitens öffnet sich ein neues Fenster, welches diese Hits auch visualisiert.
+
+Du musst nun entweder mit Code, oder eventuell auch Blatt Papier und einem Stift die Rechnung durchführen, bis du die Z-Masse erhälst.
+Neben der Z-Masse kannst du folgende Größen angeben: Impulse der Teilchen? Flugrichtung der Teilchen? Ladung der Teilchen?
+
+Viel Spaß!
+
