@@ -3,9 +3,11 @@ Dies ist eine Liste von einigen Projekten für Schüler mit ATLAS Open Data / Th
 
 ## Einführung zur Teilchenphysik
 
-Dies geschieht außerhalb der GitHub Umgebung in dem direkten Gespräch mit Deinem Betreuer.
+In diesem Praktikum haben wir ein circa 20-minütige Einleitungsvideo erstellt, welches die Teilchenphysik im Bezug zur Arbeit mit Z-Bosonen einführt. Das Video findest du hier: https://youtu.be/G7fJ9sJ5moM.
 
-Eine gute Einführung im Internet ist weltmaschine.de:
+Weiterführend kannst du dann Fragen im direkten Gespräch mit Deinem Betreuer diskutieren.
+
+Eine gute textliche und ausführliche Einführung ist auch im Internet unter weltmaschine.de zu finden:
 Über die Physik, die wir am LHC mit dem ATLAS Experiment durchführen: https://www.weltmaschine.de/physik/
 Schaue Dir besonders das Standardmodell und das Higgs an - diese Seiten diskutieren unseren aktuellen Wissenstand.
 Weiterhin kannst Du unter LHC und Experimente am LHC über die Experimente lernen, mit denen wir die Teilchenphysik studieren:
@@ -23,6 +25,9 @@ Dazu gehe zum Link: https://atlas.physicsmasterclasses.org/de/index.htm
 Es gibt zwei Analyse-Wege, die Du auswählen kannst, den W-Pfad, oder den Z-Pfad.
 Dies sind zwei so genannte Kraftträgerteilchen, die die elektroschwache Kraft übertragen. Diese Kraft ist für zum Beispiel die Kernspaltung in Kernkraftwerken oder die Kernfusion innerhalb der Sonne verantwortlich.
 Der Z-Pfad wird einfacher in der Ausführung sein, aber je nach dem Projekt an dem Du arbeiten wirst, kann der W-Pfad lehrreicher sein. Sprich mit Deinem Betreuer, welcher Pfad besser für Dich ist.
+
+Zur Datenanalyse mit dem Programm HYPATIA haben wir ein weiteres Video erstellt, dieses findest Du hier: https://youtu.be/e2Qr5Pi2BMU. \
+Dieses Video ist 10 Minuten lang und gibt Dir eine Anleitung, wie Du mit HYPATIA Daten auswertest.
 
 ### ZPfad
 Wenn Du zum Punkt "An die Arbeit!" kommst, wirst Du gebeten, dass Event Display HYPATIA herunterzuladen. Wenn Du Deinen eigenen Laptop mitbringst, solltest Du dies tun, ansonsten spreche mit Deinem Betreuer, da das Programm sich eventuell schon auf dem Instituts-PC befindet.
