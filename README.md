@@ -31,9 +31,10 @@ Dieses Video ist 10 Minuten lang und gibt Dir eine Anleitung, wie Du mit HYPATIA
 
 ### ZPfad
 Wenn Du zum Punkt "An die Arbeit!" kommst, wirst Du gebeten, dass Event Display HYPATIA herunterzuladen. Wenn Du Deinen eigenen Laptop mitbringst, solltest Du dies tun, ansonsten spreche mit Deinem Betreuer, da das Programm sich eventuell schon auf dem Instituts-PC befindet.
-HYPATHIA ist ein java Programm, dass betriebsunabhängig auf deinem PC laufen sollte.
-Lade zunächst ein beliebiges Datenpaket herunter, wenn Du möchtest auch mehrere. Ein Datenpaket ist ungefähr 30MB groß.
-Öffne nun das Programm Hypatia_7.4_Masterclass.jar und lade ein Datenpaket hoch. Diskutiere mit deinem Betreuer, wie man die Daten bewertet und was Du auswerten sollst. Du wirst einige Ereignisse bewerten müssen, möglicherweise mit mehreren Datenpaketen, um ein Resultat zu erhalten.
+HYPATIA ist ein java Programm, dass betriebsunabhängig auf deinem PC laufen sollte.
+Wir haben ein Datenpaket erstellt, welches für das Praktikum geeignet ist:
+https://box.hu-berlin.de/f/efe99d96700a42228868/ \
+Öffne nun das Programm Hypatia_7.4_Masterclass.jar und lade das Datenpaket. Diskutiere mit deinem Betreuer, wie man die Daten bewertet und was Du auswerten sollst. Du wirst einige Ereignisse bewerten müssen, um ein signifikantes Resultat zu erhalten.
 
 ### WPfad
 
