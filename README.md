@@ -26,7 +26,7 @@ Es gibt zwei Analyse-Wege, die Du auswählen kannst, den W-Pfad, oder den Z-Pfad
 Dies sind zwei so genannte Kraftträgerteilchen, die die elektroschwache Kraft übertragen. Diese Kraft ist für zum Beispiel die Kernspaltung in Kernkraftwerken oder die Kernfusion innerhalb der Sonne verantwortlich.
 Der Z-Pfad wird einfacher in der Ausführung sein, aber je nach dem Projekt an dem Du arbeiten wirst, kann der W-Pfad lehrreicher sein. Sprich mit Deinem Betreuer, welcher Pfad besser für Dich ist.
 
-Zur Datenanalyse mit dem Programm HYPATIA haben wir ein weiteres Video erstellt, dieses findest Du hier: https://youtu.be/e2Qr5Pi2BMU. \
+Zur Datenanalyse mit dem Programm HYPATIA haben wir ein weiteres Video erstellt, dieses findest Du hier (ca. 200 MB große zip-Datei): https://youtu.be/e2Qr5Pi2BMU. \
 Dieses Video ist 10 Minuten lang und gibt Dir eine Anleitung, wie Du mit HYPATIA Daten auswertest.
 
 ### ZPfad
